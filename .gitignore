@@ -3,4 +3,3 @@ node_modules
 /laravel-next-app/.env
 /next-frontend-app/.env.local
 .DS_Store
-docs-private/

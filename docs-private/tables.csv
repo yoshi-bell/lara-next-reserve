@@ -16,17 +16,24 @@ shops,area_id,BIGINT,,,TRUE,areas(id),
 shops,genre_id,BIGINT,,,TRUE,genres(id),
 shops,description,TEXT,,,TRUE,,
 shops,image_url,VARCHAR(255),,,TRUE,,
-shops,start_time,TIME,,,TRUE,,追加要件（予約開始）
-shops,end_time,TIME,,,TRUE,,追加要件（予約終了）
-shops,capacity,INTEGER,,,TRUE,,追加要件（収容人数）
+shops,start_time,TIME,,,TRUE,,スロット生成のデフォルト開始時間
+shops,end_time,TIME,,,TRUE,,スロット生成のデフォルト終了時間
+shops,default_capacity,INTEGER,,,TRUE,,スロット生成のデフォルト最大人数
+shops,default_stay_time,INTEGER,,,TRUE,,デフォルト滞在時間(分)
 shops,created_at,TIMESTAMP,,,,,
 shops,updated_at,TIMESTAMP,,,,,
+reservation_slots,id,BIGINT,TRUE,,TRUE,,在庫管理用テーブル
+reservation_slots,shop_id,BIGINT,,,TRUE,shops(id),複合ユニーク(shop_id, slot_datetime)
+reservation_slots,slot_datetime,DATETIME,,,TRUE,,30分刻みの枠日時, 複合ユニーク(shop_id, slot_datetime)
+reservation_slots,max_capacity,INTEGER,,,TRUE,,その枠の最大人数
+reservation_slots,current_reserved,INTEGER,,,TRUE,,現在の予約人数(初期値0)
+reservation_slots,created_at,TIMESTAMP,,,,,
+reservation_slots,updated_at,TIMESTAMP,,,,,
 reservations,id,BIGINT,TRUE,,TRUE,,
-reservations,user_id,BIGINT,,,TRUE,users(id),複合ユニーク(user_id, date, time)
+reservations,user_id,BIGINT,,,TRUE,users(id),複合ユニーク(user_id, start_at)
 reservations,shop_id,BIGINT,,,TRUE,shops(id),
-reservations,date,DATE,,,TRUE,,複合ユニーク(user_id, date, time)
-reservations,time,TIME,,,TRUE,,30分刻み、複合ユニーク(user_id, date, time)
-reservations,number,INTEGER,,,TRUE,,
+reservations,start_at,DATETIME,,,TRUE,,予約開始日時, 複合ユニーク(user_id, start_at)
+reservations,number,INTEGER,,,TRUE,,予約人数
 reservations,deleted_at,TIMESTAMP,,,,,論理削除（キャンセル用）
 reservations,created_at,TIMESTAMP,,,,,
 reservations,updated_at,TIMESTAMP,,,,,

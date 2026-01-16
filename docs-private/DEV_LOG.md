@@ -100,4 +100,33 @@
 ### 2. 次のステップ
 *   開発計画書「DEVELOPMENT_PLAN_revised.md」に基づき、Phase 4「認証機能の実装」の残りのタスク、具体的にはフロントエンド側の認証フローの実装に進みます。
 
+---
+
+## 2026-01-16: Phase 4「認証機能の実装」フロントエンド側の基本設定完了
+
+### 1. 完了したタスク
+
+#### バックエンド (Laravel)
+*   **Sanctum SPA認証の有効化:**
+    *   Laravel 11の仕様に合わせ、`bootstrap/app.php` に `EnsureFrontendRequestsAreStateful` ミドルウェアを登録しました。
+    *   `.env` ファイルに `SANCTUM_STATEFUL_DOMAINS=localhost:3000` を設定し、フロントエンドからのステートフルなリクエストを許可しました。
+
+#### フロントエンド (Next.js)
+*   **`next-auth` の導入:**
+    *   `next-auth` パッケージをインストールしました。
+    *   `app/api/auth/[...nextauth]/route.ts` を作成し、Laravelバックエンドと連携する `CredentialsProvider` を実装しました。
+    *   `types/next-auth.d.ts` を作成し、`Session` や `User` の型に `id` を追加する型拡張を行いました。
+*   **`SessionProvider` の設定:**
+    *   `app/providers.tsx` を作成し、`app/layout.tsx` でアプリケーション全体をラップすることで、セッション情報をグローバルに利用できるようにしました。
+*   **環境変数の設定:**
+    *   `.env.local` ファイルを作成し、バックエンドのURL (`BACKEND_URL`) と `next-auth` のシークレット (`NEXTAUTH_SECRET`) を設定しました。
+*   **ログイン・登録ページの作成:**
+    *   `/login` と `/register` のルートに、それぞれの機能を持つページコンポーネント (`page.tsx`) を作成しました。
+    *   `機能一覧.csv` の要件に基づき、登録フォームに必要な入力項目（名前、電話番号、性別、年齢など）を追加しました。
+    *   Tailwind CSS を使用して、UI見本画像のトンマナを意識した基本的なスタイリングを適用しました。
+
+### 2. 次のステップ
+*   実装したログイン・登録機能がバックエンドと連携して正しく動作するかの結合テスト。
+*   （必要に応じて）バックエンド側に不足している登録APIの実装。
+*   Phase 5「フロントエンドの実装 (店舗・予約・お気に入り)」に着手します。
 

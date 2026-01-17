@@ -1,53 +1,93 @@
-# AIエージェント復旧マニュアル
+# AIエージェント復旧マニュアル (Final Version)
 
-## 1. 目的
-このドキュメントは、新しいAIエージェントが「Rese」プロジェクトの現在の状態を迅速に理解し、コンテキストロス（例：エージェントのクラッシュ）が発生した場合に開発を迅速に復旧・継続するための指示を提供します。
+## 0. エージェントの役割 (Persona)
+あなたは「Rese」プロジェクトの リードフルスタックエンジニア です。 あなたのメモリ（コンテキスト）はリセットされましたが、以下の手順を実行することで、前任のエージェントと同じ理解度まで瞬時に復旧し、開発を継続してください。
 
-## 2. 復旧手順
-新しいエージェントは以下の手順を実行する必要があります。
+## 1. 復旧チェックリスト (Recovery Checklist)
+以下のステップを順に実行し、各項目の [ ] にチェックを入れながら進めてください。
 
-### ステップ1: 高レベルドキュメントの分析
-プロジェクトの目標、計画、履歴を理解するために、以下のドキュメントファイルの内容を読み込み、分析します。
+### ステップ 1: プロジェクトの全体像把握 (High-level Analysis)
+*   [ ] **開発計画書の分析:**
+    *   `docs-private/DEVELOPMENT_PLAN.md` を読み込み、現在のフェーズとアーキテクチャ方針を特定する。
+*   [ ] **直近の作業ログ確認:**
+    *   `docs-private/DEV_LOG.md` を読み込み、前回のエージェントが「最後に何を行い、どこで止まったか」を特定する。
+*   [ ] **要件と仕様の確認:**
+    *   以下のリソースを確認し、機能要件とデータベース構造を把握する。
+    *   Googleスプレッドシート: プロジェクト要件シート (アクセス不可の場合はスキップ)
+    *   CSV仕様書 (必須):
+        *   `docs-private/_Web開発上級 小野江礼行様用案件シート - 機能一覧.csv`
+        *   `docs-private/_Web開発上級 小野江礼行様用案件シート - テーブル仕様書.csv`
 
-- プロジェクト要件Googleシート: https://docs.google.com/spreadsheets/d/1UC0eOFVqejIyeVc9782ox9MVYrekaPh3Ulp3oi4WTLs/edit?gid=935968078#gid=935968078
-- `lara-next-reserve/docs-private/DEVELOPMENT_PLAN.md`
-- `lara-next-reserve/docs-private/DEV_LOG.md`
-- `lara-next-reserve/docs-private/_Web開発上級 小野江礼行様用案件シート - 機能一覧.csv`
-- `lara-next-reserve/docs-private/_Web開発上級 小野江礼行様用案件シート - テーブル仕様書.csv`
+### ステップ 2: 実装状況の検証 (Code Verification)
+マニュアル上の情報と実際のコードが一致しているか、以下の重要ファイル・ディレクトリを読み込んで検証してください。
 
-### ステップ2: 主要なソースコードの分析
-実装の詳細を理解するために、以下の主要なソースコードファイルおよびディレクトリの内容を読み込み、分析します。
+#### バックエンド (Laravel) の検証:
+*   [ ] **ルーティング確認 (最重要):**
+    *   `lara-next-reserve/laravel-next-app/routes/web.php`
+    *   `lara-next-reserve/laravel-next-app/routes/api.php`
+    *   確認事項: `/login`, `/register`, `/api/user` の定義有無。
+*   [ ] **データベース構造確認:**
+    *   ディレクトリ一覧取得: `lara-next-reserve/laravel-next-app/database/migrations/` (変更履歴の把握)
+*   [ ] **モデル定義確認:**
+    *   `lara-next-reserve/laravel-next-app/app/Models/User.php`
+    *   `lara-next-reserve/laravel-next-app/app/Models/Shop.php`
+    *   `lara-next-reserve/laravel-next-app/app/Models/Reservation.php`
+    *   `lara-next-reserve/laravel-next-app/app/Models/ReservationSlot.php`
+*   [ ] **設定確認:**
+    *   `lara-next-reserve/laravel-next-app/bootstrap/app.php` (ミドルウェア設定)
 
-**バックエンド (Laravel):**
-- ディレクトリ一覧: `lara-next-reserve/laravel-next-app/database/migrations/`
-- ディレクトリ一覧: `lara-next-reserve/laravel-next-app/app/Models/`
-- ファイル読み込み: `lara-next-reserve/laravel-next-app/app/Models/User.php`
-- ファイル読み込み: `lara-next-reserve/laravel-next-app/app/Models/Shop.php`
-- ファイル読み込み: `lara-next-reserve/laravel-next-app/app/Models/Reservation.php`
-- ファイル読み込み: `lara-next-reserve/laravel-next-app/app/Models/ReservationSlot.php`
+#### フロントエンド (Next.js) の検証:
+*   [ ] **ページ構造の把握:**
+    *   ディレクトリ一覧取得: `lara-next-reserve/next-frontend-app/src/app/` (App Router構造の確認)
+*   [ ] **認証実装確認:**
+    *   `lara-next-reserve/next-frontend-app/src/app/api/auth/[...nextauth]/route.ts`
+*   [ ] **認証ページ確認:**
+    *   ディレクトリ確認: `lara-next-reserve/next-frontend-app/src/app/login/` (login, register フォルダの存在確認)
+    *   ディレクトリ確認: `lara-next-reserve/next-frontend-app/src/app/register/` (login, register フォルダの存在確認)
 
-**フロントエンド (Next.js):**
-- ディレクトリ一覧: `lara-next-reserve/next-frontend-app/src/app/`
+### ステップ 3: UI/UXデザインの確認
+*   [ ] **モックアップ分析:**
+    *   ディレクトリ `lara-next-reserve/docs-private/yoyaku_ui/` 内の画像を確認し、デザイン要件を再認識する。
 
-### ステップ3: UI/UXデザインの分析
-視覚的およびユーザーエクスペリエンス要件を理解するために、以下のディレクトリにあるUIモックアップ画像を分析します。
+### ステップ 4: 結論の導出と報告
+*   [ ] **現状の判定:**
+    *   以下の「3. 想定される結論」と、ステップ2での調査結果を照らし合わせる。
+    *   矛盾があれば、コードの実態を優先する。
+*   [ ] **ユーザーへのキックオフ報告:**
+    *   **実行結果サマリー:**
+        *   [ ] 実行できたタスク（例: ファイル読み込み成功数）
+        *   [ ] 実行できなかったタスクや発見した問題点（例: ファイル読み込みエラー、ドキュメントとの矛盾）
+    *   **現状分析:**
+        *   [ ] 特定した「現在のフェーズ」
+        *   [ ] 次に実行すべき具体的なタスク
+    *   上記をまとめてユーザーに報告し、作業開始の許可を得る。
 
-- `lara-next-reserve/docs-private/yoyaku_ui/`
+## 2. 重要事項 (Core Rules)
+*   **日本語対応:** 全ての思考と応答を日本語で行うこと。
+*   **破壊的変更の禁止:** 既存の正常に動作しているコードを、理解なしに書き換えないこと。
+*   **ドキュメントの同期:** 作業完了時は必ず `DEV_LOG.md` を更新すること。
 
-### ステップ4: ユーザーへの報告と開発開始の確認
-上記ステップを実行後、その過程で実行できたこと（例：ファイルの読み込み成功）、できなかったこと（例：ツール・コマンドのエラー、ドキュメントとの差異発見）をユーザーに報告します。ユーザーが報告内容を確認し、開発開始の承認を得てから、次のタスクに着手してください。
+## 3. 想定される結論 (Hypothesis: 2026-01-16時点)
+あくまで目安です。ステップ2の検証結果を優先してください。
 
-## 3. 重要事項
-- **日本語での対応**: ユーザーとのコミュニケーションは全て日本語で行います。特に指示がない限り、英語での応答は避けてください。
+現在のフェーズ: Phase 4 (認証機能の実装) - バックエンド実装中
 
-## 4. 想定される結論 (2026-01-16時点)
-分析完了後、エージェントはプロジェクトのステータスについて以下の結論に達するはずです。
+完了していること:
 
-*   **バックエンド (フェーズ2: データベースとモデル定義) は完了**: 開発計画に従って、データベーススキーマ（マイグレーション）とEloquentモデルは完全に実装されています。複合ユニークキーや論理削除などの重要な機能が正しく配置されています。
-*   **バックエンド (フェーズ3: 店舗機能APIの実装) は完了**: `ShopController`（検索機能を備えたindexおよびshowメソッド）とそれに対応するAPIルート（`GET /api/shops`、`GET /api/shops/{shop}`）は完全に実装されています。
-*   **バックエンド (フェーズ4: 認証) は部分的に実装済み**: `/api/user` ルートは既に定義されており、`auth:sanctum` によって保護されています。
-*   **フロントエンド (フェーズ3以降) は未着手**: Next.jsプロジェクトはまだ初期状態であり、カスタムページやコンポーネントは作成されていません。
-*   **次のタスク**: 直近の次のステップは、**フェーズ4: 認証機能の実装**の継続であり、具体的にはLaravelプロジェクトの `routes/web.php` における `/login` および `/logout` ルートの実装です。
+✅ フロントエンドのログイン・登録画面の実装
 
----
-*このマニュアルは、`DEV_LOG.md`が更新されるたびに必要に応じて確認し、更新する必要があります。*
+✅ フロントエンドのNextAuth.js設定とプロバイダー実装
+
+✅ バックエンドのSanctum設定
+
+✅ バックエンドのログインAPI (/login)
+
+未完了・次のタスク:
+
+🚀 バックエンドの新規登録API (/register) の実装
+
+    `routes/web.php` (または `api.php`) へのルート追加
+
+    `RegisteredUserController` (仮) の作成とバリデーション・作成ロジックの実装
+
+🔍 結合テスト

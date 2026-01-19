@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "@/lib/axios"; // 作成したaxiosをインポート
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
     const [phone, setPhone] = useState("");
     const [gender, setGender] = useState("");
     const [age, setAge] = useState("");
@@ -18,40 +20,38 @@ export default function RegisterPage() {
         setError("");
 
         try {
-            const res = await fetch(`${process.env.BACKEND_URL}/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                    phone,
-                    gender,
-                    age: Number(age),
-                }),
+            // 1. CSRFクッキーを取得 (GETメソッド)
+            await axios.get('/sanctum/csrf-cookie');
+
+            // 2. 登録リクエスト送信 (POSTメソッド)
+            await axios.post('/api/register', {
+                name,
+                email,
+                password,
+                password_confirmation: passwordConfirmation,
+                phone_number: phone, // "phone" から "phone_number" に変更
+                gender,
+                age: Number(age),
             });
 
-            if (!res.ok) {
-                const errorData = await res.json();
+            // 登録成功
+            router.push("/login");
+        } catch (err: any) {
+            // エラーハンドリング
+            if (err.response && err.response.data) {
+                const errorData = err.response.data;
                 const errorMessage =
                     errorData.message ||
                     (errorData.errors &&
                         Object.values(errorData.errors).flat().join(", ")) ||
                     "登録に失敗しました。";
-                throw new Error(errorMessage);
+                setError(errorMessage);
+            } else {
+                setError("登録処理中に予期せぬエラーが発生しました。");
             }
-
-            // 登録成功
-            router.push("/login");
-        } catch (err: any) {
-            setError(
-                err.message || "登録処理中に予期せぬエラーが発生しました。",
-            );
         }
     };
-
+    
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg w-full max-w-md">
@@ -113,6 +113,24 @@ export default function RegisterPage() {
                             className="form-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    {/* Password Confirmation - 追加 */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="password_confirmation"
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                        >
+                            パスワード確認
+                        </label>
+                        <input
+                            id="password_confirmation"
+                            type="password"
+                            placeholder="パスワード確認"
+                            className="form-input"
+                            value={passwordConfirmation}
+                            onChange={(e) => setPasswordConfirmation(e.target.value)}
                             required
                         />
                     </div>

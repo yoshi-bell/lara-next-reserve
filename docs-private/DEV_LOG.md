@@ -125,6 +125,53 @@
 
 ---
 
+## 2026-01-18: Phase 4「認証機能の実装」結合テストおよび問題解決
+
+### 1. 完了したタスク
+
+#### フロントエンド (Next.js)
+*   **認証機能の結合テストの完了:** 登録・ログイン機能がフロントエンドとバックエンド間で連携して正しく動作することを確認しました。
+
+### 2. 問題発生と解決の経緯
+
+#### 問題1: `Unexpected token '<', "<!DOCTYPE "... is not valid JSON` (HTTP 419)
+*   **状況:** `http://localhost:3000/register` で登録ボタンを押した際に発生。
+*   **初期原因の仮説:** フロントエンドのリクエストURL間違いやLaravelバックエンドでのエラー。
+*   **判明した真の原因:**
+    1.  **フロントエンドの環境変数参照ミス:** クライアントコンポーネント (`"use client"`) で `process.env.BACKEND_URL` を直接参照していたため、`undefined` になり、Next.jsの404 HTMLが返されていた。
+    2.  **CSRFトークンの欠如:** `fetch` APIでは `X-XSRF-TOKEN` ヘッダーが自動で付与されないため、LaravelのCSRF保護に引っかかっていた。
+*   **解決策:**
+    1.  `.env.local` の `BACKEND_URL` を `NEXT_PUBLIC_BACKEND_URL` に変更し、`register/page.tsx` で `process.env.NEXT_PUBLIC_BACKEND_URL` を参照するように修正。
+    2.  `routes/web.php` の `/login`, `/logout` ルートを `routes/api.php` に移動し、全ての認証APIを `/api/` プレフィックスで統一。
+    3.  `config/cors.php` を作成し、`supports_credentials = true`、`allowed_origins` に `http://localhost:3000` を設定。
+    4.  `.env` に `SESSION_SECURE_COOKIE=false` を追加。
+    5.  `axios` を導入し、`src/lib/axios.ts` で `baseURL` と `withCredentials: true` を設定。さらに、`axios` のリクエストインターセプターを使用し、`js-cookie` で `XSRF-TOKEN` を読み取り、`X-XSRF-TOKEN` ヘッダーに明示的に設定することで、CSRF保護を通過させる。
+    6.  Laravelのアプリケーションサーバーを再起動し、設定キャッシュをクリア (`sail artisan config:clear`)。
+
+#### 問題2: `The phone number field is required.`
+*   **状況:** 登録時、電話番号が必須というバリデーションエラーが発生。
+*   **原因:** フロントエンドの `axios.post` で送信するデータのキー名 (`phone`) と、バックエンド (`RegisterController`) のバリデーションが期待するキー名 (`phone_number`) が一致していなかったため。
+*   **解決策:** `register/page.tsx` で送信するデータのキー名を `phone_number` に修正。
+
+#### 問題3: `Failed to parse URL from undefined/api/login`
+*   **状況:** ログイン時、APIリクエストのURL解析エラーが発生。
+*   **原因:** `app/api/auth/[...nextauth]/route.ts` の `authorize` 関数内で、`process.env.BACKEND_URL` を参照していたため、Next.jsの環境変数ルール (`NEXT_PUBLIC_` プレフィックス) により `undefined` になっていた。
+*   **判明したより良い解決策:** 登録機能が `axios` ベースにリファクタリングされたため、ログイン機能も `axios` ベースに統一する。
+    *   `login/page.tsx` を `axios` を使うように全面的に書き換え。
+
+### 3. 最終的な動作確認結果
+
+*   **新規登録:** `http://localhost:3000/register` から新しいユーザー情報で登録を試行。
+    *   登録に成功し、`http://localhost:3000/login` へリダイレクトされることを確認。
+    *   開発者ツール（Networkタブ）で、`/sanctum/csrf-cookie` および `/api/register` が正常に処理されていることを確認。
+*   **ログイン:** `http://localhost:3000/login` から登録したユーザー情報でログインを試行。
+    *   ログインに成功し、`http://localhost:3000/` （トップページ）へリダイレクトされることを確認。
+
+### 4. 次のステップ
+*   `DEVELOPMENT_PLAN.md` のチェックリストに従い、 Phase 5「フロントエンドの実装 (店舗・予約・お気に入り)」に着手します。
+
+---
+
 ## 2026-01-18: Phase 4「認証機能の実装」バックエンド新規登録API実装と動作確認
 
 ### 1. 完了したタスク

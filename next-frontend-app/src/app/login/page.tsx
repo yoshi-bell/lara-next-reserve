@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import axios from "@/lib/axios"; // 作成済みの設定済みaxiosを使う
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -15,24 +15,31 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const result = await signIn("credentials", {
-                redirect: false,
+            // 1. CSRFクッキー取得
+            await axios.get('/sanctum/csrf-cookie');
+
+            // 2. ログインリクエスト (axiosを使用)
+            await axios.post('/api/login', {
                 email,
                 password,
             });
 
-            if (result?.error) {
-                setError(result.error);
+            // 3. 成功時
+            router.push("/"); 
+
+        } catch (err: any) {
+            // エラーハンドリング
+            if (err.response && err.response.data) {
+                setError(err.response.data.message || "ログインに失敗しました。");
             } else {
-                router.push("/");
+                setError("予期せぬエラーが発生しました。");
             }
-        } catch (err) {
-            setError("ログイン処理中に予期せぬエラーが発生しました。");
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            {/* ↓ 提案コードではここに w-full max-w-md を追加していましたが、元のままにしています */}
             <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
                 <h1 className="text-2xl font-bold text-center">ログイン</h1>
                 {error && (
@@ -52,6 +59,7 @@ export default function LoginPage() {
                             id="email"
                             type="email"
                             placeholder="メールアドレス"
+                            // ↓ 元のデザインクラスを維持
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -69,6 +77,7 @@ export default function LoginPage() {
                             id="password"
                             type="password"
                             placeholder="パスワード"
+                            // ↓ 元のデザインクラスを維持
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

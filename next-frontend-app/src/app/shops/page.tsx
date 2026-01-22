@@ -14,7 +14,7 @@ export default function ShopsPage() {
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-center mb-8">店舗一覧</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {shops.map(shop => (
+                {shops.map((shop, index) => (
                     <div key={shop.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="relative h-48 w-full">
                             {shop.image_url ? (
@@ -22,6 +22,8 @@ export default function ShopsPage() {
                                     src={shop.image_url}
                                     alt={shop.name}
                                     fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    priority={index < 12} // 最初の4枚（1行目）を優先読み込み
                                     style={{ objectFit: 'cover' }}
                                     className="transition-transform duration-300 hover:scale-105"
                                 />

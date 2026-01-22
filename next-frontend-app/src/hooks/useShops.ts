@@ -2,6 +2,17 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios'; // 作成済みのaxiosインスタンスをインポート
 
+// AreaとGenreの型定義 (必要に応じて詳細化)
+interface Area {
+    id: number;
+    name: string;
+}
+
+interface Genre {
+    id: number;
+    name: string;
+}
+
 // 店舗データの型定義 (バックエンドのAPIレスポンスに合わせて調整)
 interface Shop {
     id: number;
@@ -14,6 +25,9 @@ interface Shop {
     end_time: string;
     default_capacity: number;
     default_stay_time: number;
+    
+    area: Area; // Areaリレーションを追加
+    genre: Genre; // Genreリレーションを追加
     // 必要に応じて他のフィールドも追加
 }
 

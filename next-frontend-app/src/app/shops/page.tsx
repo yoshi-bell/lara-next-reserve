@@ -17,20 +17,26 @@ export default function ShopsPage() {
                 {shops.map(shop => (
                     <div key={shop.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="relative h-48 w-full">
-                            {/* 画像表示 (Next.js Imageコンポーネント) */}
-                            <Image
-                                src={shop.image_url || '/images/default_shop.jpg'} // 画像URLがない場合のフォールバック
-                                alt={shop.name}
-                                layout="fill" // 親要素に合わせて画像を拡大縮小
-                                objectFit="cover" // 画像が親要素に収まるようにトリミング
-                                className="transition-transform duration-300 hover:scale-105"
-                            />
+                            {shop.image_url ? (
+                                <Image
+                                    src={shop.image_url}
+                                    alt={shop.name}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    className="transition-transform duration-300 hover:scale-105"
+                                />
+                            ) : (
+                                // 画像がない場合のプレースホルダー
+                                <div className="flex items-center justify-center h-full bg-gray-200">
+                                    <span className="text-gray-500">No Image</span>
+                                </div>
+                            )}
                         </div>
                         <div className="p-4">
                             <h2 className="text-xl font-semibold mb-2">{shop.name}</h2>
                             <div className="text-gray-600 text-sm mb-4">
-                                <p>エリア: {shop.area_id}</p> {/* area_id から area.name に変える必要あり */}
-                                <p>ジャンル: {shop.genre_id}</p> {/* genre_id から genre.name に変える必要あり */}
+                                <p>エリア: {shop.area.name}</p>
+                                <p>ジャンル: {shop.genre.name}</p>
                             </div>
                             <div className="flex justify-between items-center">
                                 {/* 詳細ボタン */}

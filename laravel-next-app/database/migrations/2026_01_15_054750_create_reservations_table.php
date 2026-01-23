@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('shop_id')->constrained()->cascadeOnDelete();
             $table->dateTime('start_at');
             $table->integer('number');
+            $table->integer('usage_time'); // 予約時の滞在時間（分）をスナップショットとして保存
             $table->softDeletes();
             $table->timestamps();
 

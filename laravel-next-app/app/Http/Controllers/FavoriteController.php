@@ -10,6 +10,25 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     /**
+     * お気に入り店舗一覧を取得
+     */
+    public function index()
+    {
+        $userId = Auth::id();
+        
+        $shops = Shop::whereHas('favorites', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+        ->with(['area', 'genre'])
+        ->withExists(['favorites' => function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        }])
+        ->get();
+
+        return response()->json($shops);
+    }
+
+    /**
      * お気に入りを登録
      */
     public function store(Request $request, Shop $shop)

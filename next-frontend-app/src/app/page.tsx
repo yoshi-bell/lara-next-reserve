@@ -4,22 +4,20 @@ import { useShops } from "@/hooks/useShops";
 import { useAreas } from "@/hooks/useAreas";
 import { useGenres } from "@/hooks/useGenres";
 import { useState } from "react";
-import ShopCard from "@/components/ShopCard"; // ShopCardをインポート
+import ShopCard from "@/components/ShopCard";
+import Header from "@/components/Header";
 
 export default function ShopsPage() {
-    // 検索条件のステート管理
     const [selectedArea, setSelectedArea] = useState("");
     const [selectedGenre, setSelectedGenre] = useState("");
     const [searchName, setSearchName] = useState("");
 
-    // ステートを渡して店舗データを取得 (連動して自動再取得される)
     const { shops, isLoading, isError } = useShops({
         areaId: selectedArea,
         genreId: selectedGenre,
         name: searchName,
     });
 
-    // プルダウン用データの取得
     const { areas } = useAreas();
     const { genres } = useGenres();
 
@@ -28,22 +26,9 @@ export default function ShopsPage() {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            {/* ヘッダー */}
-            <header className="flex justify-between items-center p-8 flex-wrap gap-4">
-                <div className="flex items-center">
-                    {/* ハンバーガーメニュー */}
-                    <button className="bg-blue-600 text-white p-2 rounded shadow-md mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                    </button>
-                    {/* ロゴ */}
-                    <h1 className="text-3xl font-bold text-blue-600">Rese</h1>
-                </div>
-
-                {/* 検索バー */}
-                <div className="flex bg-white rounded shadow-md overflow-hidden flex-grow md:flex-grow-0">
-                    {/* エリア選択 */}
+            {/* 共通ヘッダーに検索バーを差し込む */}
+            <Header>
+                <div className="flex bg-white rounded shadow-md overflow-hidden w-full max-w-xl">
                     <select 
                         className="p-2 border-r border-gray-200 text-gray-700 outline-none cursor-pointer text-sm bg-white"
                         value={selectedArea}
@@ -54,7 +39,6 @@ export default function ShopsPage() {
                             <option key={area.id} value={area.id}>{area.name}</option>
                         ))}
                     </select>
-                    {/* ジャンル選択 */}
                     <select 
                         className="p-2 border-r border-gray-200 text-gray-700 outline-none cursor-pointer text-sm bg-white"
                         value={selectedGenre}
@@ -65,7 +49,6 @@ export default function ShopsPage() {
                             <option key={genre.id} value={genre.id}>{genre.name}</option>
                         ))}
                     </select>
-                    {/* キーワード検索 */}
                     <div className="flex items-center p-2 flex-grow">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400 mr-2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 105.197 5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -79,7 +62,7 @@ export default function ShopsPage() {
                         />
                     </div>
                 </div>
-            </header>
+            </Header>
 
             {/* 店舗一覧 */}
             <div className="container mx-auto px-8 pb-8">

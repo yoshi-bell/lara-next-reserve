@@ -5,6 +5,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -15,8 +16,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     
     // お気に入り機能
+    Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/shops/{shop}/favorite', [FavoriteController::class, 'store']);
     Route::delete('/shops/{shop}/favorite', [FavoriteController::class, 'destroy']);
+
+    // 予約機能
+    Route::get('/reservations', [ReservationController::class, 'index']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy']);
 });
 
 Route::get('/shops', [ShopController::class, 'index']);

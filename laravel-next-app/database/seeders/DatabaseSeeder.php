@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AreaSeeder::class,
             GenreSeeder::class,
             ShopSeeder::class,
+            ReservationSlotSeeder::class, // 追加
         ]);
     }
 }

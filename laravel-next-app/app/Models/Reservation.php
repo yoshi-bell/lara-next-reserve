@@ -16,6 +16,7 @@ class Reservation extends Model
         'shop_id',
         'start_at',
         'number',
+        'usage_time',
     ];
 
     protected function casts(): array

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\GenreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,9 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/shops', [ShopController::class, 'index']);
 Route::get('/shops/{shop}', [ShopController::class, 'show']);
+
+Route::get('/areas', [AreaController::class, 'index']);
+Route::get('/genres', [GenreController::class, 'index']);
 
 // 登録
 Route::post('/register', [RegisterController::class, 'store']);

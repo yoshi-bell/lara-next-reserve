@@ -19,6 +19,7 @@ interface Shop {
     image_url: string;
     area: Area;
     genre: Genre;
+    favorites_exists: boolean;
 }
 
 const fetcher = async (url: string) => {

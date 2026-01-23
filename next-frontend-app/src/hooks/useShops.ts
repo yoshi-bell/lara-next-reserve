@@ -28,6 +28,7 @@ interface Shop {
     
     area: Area; // Areaリレーションを追加
     genre: Genre; // Genreリレーションを追加
+    favorites_exists: boolean; // ログインユーザーのお気に入り状態
     // 必要に応じて他のフィールドも追加
 }
 

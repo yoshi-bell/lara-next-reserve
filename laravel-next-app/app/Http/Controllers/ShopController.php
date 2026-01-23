@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Shop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -12,7 +13,12 @@ class ShopController extends Controller
      */
     public function index(Request $request)
     {
+        $userId = Auth::id();
+
         $shops = Shop::with(['area', 'genre'])
+            ->withExists(['favorites' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])
             ->when($request->area_id, function ($query, $areaId) {
                 $query->where('area_id', $areaId);
             })
@@ -32,7 +38,13 @@ class ShopController extends Controller
      */
     public function show(Shop $shop)
     {
-        $shop->load(['area', 'genre']);
+        $userId = Auth::id();
+
+        $shop->load(['area', 'genre'])
+            ->loadExists(['favorites' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }]);
+
         return response()->json($shop);
     }
 }

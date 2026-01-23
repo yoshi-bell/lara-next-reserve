@@ -4,13 +4,20 @@ use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    // お気に入り機能
+    Route::post('/shops/{shop}/favorite', [FavoriteController::class, 'store']);
+    Route::delete('/shops/{shop}/favorite', [FavoriteController::class, 'destroy']);
+});
 
 Route::get('/shops', [ShopController::class, 'index']);
 Route::get('/shops/{shop}', [ShopController::class, 'show']);

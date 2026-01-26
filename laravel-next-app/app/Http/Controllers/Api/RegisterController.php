@@ -3,23 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest; // 追加
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-    public function store(Request $request)
+    public function store(RegisterRequest $request) // 型変更
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'], // フロントエンドにpassword_confirmationがないため
-            'phone_number' => ['required', 'string', 'max:20'],
-            'gender' => ['required', 'string', 'in:male,female,other'],
-            'age' => ['required', 'integer', 'min:0'],
-        ]);
+        // バリデーションは自動実行されるため削除
 
         $user = User::create([
             'name' => $request->name,

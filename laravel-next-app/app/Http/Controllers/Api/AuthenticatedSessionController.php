@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest; // 変更
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -13,12 +14,10 @@ class AuthenticatedSessionController extends Controller
     /**
      * ログイン処理 (セッションの作成)
      */
-    public function store(Request $request): JsonResponse
+    public function store(LoginRequest $request): JsonResponse // 型変更
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        // バリデーションは自動実行されるため削除
+        $credentials = $request->only(['email', 'password']);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();

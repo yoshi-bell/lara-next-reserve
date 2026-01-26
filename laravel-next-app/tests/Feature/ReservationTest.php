@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Reservation;
+use App\Models\ReservationSlot;
 use App\Models\Shop;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Tests\TestCase;
@@ -12,6 +14,126 @@ use Tests\TestCase;
 class ReservationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['sanctum.stateful' => ['localhost']]);
+    }
+
+    /**
+     * API経由で予約ができること
+     */
+    public function test_user_can_reserve_via_api(): void
+    {
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $shop = Shop::factory()->create(['default_stay_time' => 60]); // 60分滞在
+        $startAt = Carbon::tomorrow()->setHour(18)->setMinute(0);
+
+        // 予約枠（在庫）を作成しておく
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt,
+            'max_capacity' => 10,
+            'current_reserved' => 0,
+        ]);
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt->copy()->addMinutes(30),
+            'max_capacity' => 10,
+            'current_reserved' => 0,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->postJson('http://localhost/api/reservations', [
+                'shop_id' => $shop->id,
+                'start_at' => $startAt->format('Y-m-d H:i'),
+                'number' => 2,
+            ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('reservations', [
+            'user_id' => $user->id,
+            'shop_id' => $shop->id,
+            'number' => 2,
+        ]);
+    }
+
+    /**
+     * 必須項目不足でバリデーションエラーになる
+     */
+    public function test_reservation_validation_required_fields(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('http://localhost/api/reservations', []);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['shop_id', 'start_at', 'number']);
+    }
+
+    /**
+     * 過去の日付で予約できないこと
+     */
+    public function test_reservation_validation_past_date(): void
+    {
+        $user = User::factory()->create();
+        $shop = Shop::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('http://localhost/api/reservations', [
+                'shop_id' => $shop->id,
+                'start_at' => Carbon::yesterday()->format('Y-m-d H:i'),
+                'number' => 2,
+            ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['start_at']);
+    }
+
+    /**
+     * 重複予約（同じ時間の予約）はバリデーションエラーになること
+     */
+    public function test_reservation_validation_duplicate_time(): void
+    {
+        $user = User::factory()->create();
+        $shop = Shop::factory()->create(['default_stay_time' => 60]);
+        $startAt = Carbon::tomorrow()->setHour(19)->setMinute(0);
+
+        // 予約枠の準備
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt,
+            'max_capacity' => 10,
+            'current_reserved' => 0,
+        ]);
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt->copy()->addMinutes(30),
+            'max_capacity' => 10,
+            'current_reserved' => 0,
+        ]);
+
+        // 1回目の予約（成功するはず）
+        $this->actingAs($user)->postJson('http://localhost/api/reservations', [
+            'shop_id' => $shop->id,
+            'start_at' => $startAt->format('Y-m-d H:i'),
+            'number' => 2,
+        ])->assertStatus(201);
+
+        // 2回目の予約（失敗するはず）
+        $response = $this->actingAs($user)->postJson('http://localhost/api/reservations', [
+            'shop_id' => $shop->id,
+            'start_at' => $startAt->format('Y-m-d H:i'),
+            'number' => 2,
+        ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['start_at']);
+    }
+
+    // --- 以下、既存のモデルテスト ---
 
     /**
      * ユーザーが予約を持ち、正しくリレーションが機能することをテスト

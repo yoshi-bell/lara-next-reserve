@@ -24,26 +24,26 @@
 マニュアル上の情報と実際のコードが一致しているか、以下の重要ファイル・ディレクトリを読み込んで検証してください。
 
 #### バックエンド (Laravel) の検証:
-*   [ ] **ルーティング確認 (最重要):**
-    *   `lara-next-reserve/laravel-next-app/routes/api.php`
-*   [ ] **コントローラー確認 (リファクタリング済み):**
-    *   `app/Http/Controllers/Api/AuthenticatedSessionController.php` (ログイン・ログアウト)
-    *   `app/Http/Controllers/Api/UserController.php` (ユーザー情報)
-    *   `app/Http/Controllers/Api/RegisterController.php` (新規登録)
-*   [ ] **テスト確認:**
-    *   `tests/Feature/Auth/AuthenticationTest.php` (認証機能の網羅テスト)
+*   [ ] **バリデーション (FormRequest化済み):**
+    *   `app/Http/Requests/LoginRequest.php`
+    *   `app/Http/Requests/RegisterRequest.php`
+    *   `app/Http/Requests/StoreReservationRequest.php` (重複予約チェック実装済み)
+*   [ ] **コントローラー (リファクタリング済み):**
+    *   `app/Http/Controllers/Api/AuthenticatedSessionController.php`
+    *   `app/Http/Controllers/Api/UserController.php`
+    *   `app/Http/Controllers/Api/RegisterController.php`
+*   [ ] **テスト確認 (Green):**
+    *   `tests/Feature/Auth/AuthenticationTest.php`
+    *   `tests/Feature/Auth/RegistrationTest.php`
+    *   `tests/Feature/ReservationTest.php`
 
 #### フロントエンド (Next.js) の検証:
-*   [ ] **ページ構造の把握:**
-    *   `next-frontend-app/src/app/` 配下の各ページディレクトリ。
+*   [ ] **バリデーション設定:**
+    *   各フォーム（Login, Register）に `noValidate` 属性が追加され、バックエンドバリデーションを直接テスト可能な状態。
 
 ### ステップ 3: UI/UXデザインの確認
 *   [ ] **モックアップ分析:**
-    *   `lara-next-reserve/docs-private/yoyaku_ui/` 内の画像。
-
-### ステップ 4: 結論の導出と報告
-*   [ ] **現状の判定:**
-    *   以下の「3. 想定される結論」と、ステップ2での調査結果を照らし合わせる。
+    *   `lara-next-reserve/docs-private/yoyaku_ui/` 内の画像。ログイン・登録画面はこれに準拠。
 
 ## 2. 重要事項 (Core Rules)
 *   **日本語対応:** 全ての思考と応答を日本語で行うこと。
@@ -56,12 +56,13 @@
 
 完了していること:
 
-✅ 認証機能のリファクタリング（クロージャをコントローラーに分離）完了。
-✅ 認証機能の Feature Test による品質担保済み。
+✅ 認証・予約機能のリファクタリング（FormRequest化、コントローラー分離）完了。
+✅ バリデーションメッセージの日本語化、重複予約防止ロジックの実装完了。
+✅ 全主要機能の Feature Test による品質担保済み。
 ✅ 予約リマインダーメール送信機能（バッチ処理）の実装・確認済み。
-✅ README.md、基本設計書（CSV）の実装との同期完了。
+✅ README.md、基本設計書（CSV）の完全同期。
 
 未完了・次のタスク:
 
-🚀 ユーザーからの実装に関する質疑応答への対応。
+🚀 ユーザーからの実装に関する最終質疑応答への対応。
 🚀 本番デプロイの検討（必要に応じて）。

@@ -55,167 +55,157 @@ export default function RegisterPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg w-full max-w-md">
-                <h1 className="text-2xl font-bold text-center">新規登録</h1>
-                {error && (
-                    <p className="text-red-500 text-center text-sm mt-2">
-                        {error}
-                    </p>
-                )}
-                <form onSubmit={handleSubmit} className="mt-4">
-                    {/* Name */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="name"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            名前
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            placeholder="名前"
-                            className="form-input"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* Email */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="email"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            メールアドレス
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="メールアドレス"
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* Password */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="password"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            パスワード
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="パスワード"
-                            className="form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* Password Confirmation - 追加 */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="password_confirmation"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            パスワード確認
-                        </label>
-                        <input
-                            id="password_confirmation"
-                            type="password"
-                            placeholder="パスワード確認"
-                            className="form-input"
-                            value={passwordConfirmation}
-                            onChange={(e) => setPasswordConfirmation(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* Phone */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="phone"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            電話番号
-                        </label>
-                        <input
-                            id="phone"
-                            type="tel"
-                            placeholder="電話番号"
-                            className="form-input"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* Gender */}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="gender"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            性別
-                        </label>
-                        <select
-                            id="gender"
-                            className="form-input"
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            required
-                        >
-                            <option value="">選択してください</option>
-                            <option value="male">男性</option>
-                            <option value="female">女性</option>
-                            <option value="other">その他</option>
-                        </select>
-                    </div>
-                    {/* Age */}
-                    <div className="mb-6">
-                        <label
-                            htmlFor="age"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            年齢
-                        </label>
-                        <input
-                            id="age"
-                            type="number"
-                            placeholder="年齢"
-                            className="form-input"
-                            value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                        >
-                            登録
-                        </button>
-                    </div>
-                </form>
-                <style jsx>{`
-                    .form-input {
-                        width: 100%;
-                        padding: 0.5rem;
-                        border: 1px solid #d1d5db;
-                        border-radius: 0.375rem;
-                        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-                    }
-                    .form-input:focus {
-                        outline: 2px solid transparent;
-                        outline-offset: 2px;
-                        border-color: #3b82f6;
-                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-                    }
-                `}</style>
+            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="bg-blue-600 px-6 py-4">
+                    <h1 className="text-xl font-bold text-white">Registration</h1>
+                </div>
+                
+                <div className="px-8 py-6">
+                    {error && (
+                        <p className="text-red-500 text-center text-sm mb-4">
+                            {error}
+                        </p>
+                    )}
+                    <form onSubmit={handleSubmit} noValidate>
+                        {/* Name */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="name"
+                                    type="text"
+                                    placeholder="Username"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {/* Email */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Email"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {/* Password */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Password"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {/* Password Confirmation */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="password_confirmation"
+                                    type="password"
+                                    placeholder="Password Confirmation"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={passwordConfirmation}
+                                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {/* Phone */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="phone"
+                                    type="tel"
+                                    placeholder="Phone Number"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {/* Gender */}
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                    </svg>
+                                </span>
+                                <select
+                                    id="gender"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none bg-white"
+                                    value={gender}
+                                    onChange={(e) => setGender(e.target.value)}
+                                >
+                                    <option value="">Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        {/* Age */}
+                        <div className="mb-8">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="age"
+                                    type="number"
+                                    placeholder="Age"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={age}
+                                    onChange={(e) => setAge(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                登録
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

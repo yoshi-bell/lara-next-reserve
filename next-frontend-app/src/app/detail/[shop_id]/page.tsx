@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useState } from "react";
+import { isAxiosError } from "axios"; // 追加
 
 export default function ShopDetailPage() {
     const params = useParams();
@@ -23,14 +24,21 @@ export default function ShopDetailPage() {
 
     const handleReservation = async () => {
         setReservationError("");
+        
+        // 開発中のバックエンドバリデーション確認のため、フロントバリデーションを一時無効化
+        /*
         if (!date || !time) {
             setReservationError("日付と時間を入力してください。");
             return;
         }
+        */
 
         try {
             // start_at の作成 (YYYY-MM-DD HH:mm:ss)
-            const startAt = `${date} ${time}:00`;
+            // 入力が空の場合は適当な文字列を送ってバックエンドで弾かせる
+            const safeDate = date || "2000-01-01";
+            const safeTime = time || "00:00";
+            const startAt = `${safeDate} ${safeTime}:00`;
 
             await createReservation({
                 shop_id: Number(shop_id),
@@ -39,9 +47,9 @@ export default function ShopDetailPage() {
             });
 
             router.push("/done");
-        } catch (error: any) {
+        } catch (error) {
             console.error("Reservation failed:", error);
-            if (error.response && error.response.data && error.response.data.message) {
+            if (isAxiosError(error) && error.response && error.response.data && error.response.data.message) {
                 setReservationError(error.response.data.message);
             } else {
                 setReservationError("予約に失敗しました。ログイン状態や入力内容を確認してください。");

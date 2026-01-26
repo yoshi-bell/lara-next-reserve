@@ -23,6 +23,7 @@ class ReservationFactory extends Factory
             'shop_id' => Shop::factory(),
             'start_at' => fake()->dateTimeBetween('now', '+1 month'),
             'number' => fake()->numberBetween(1, 5),
+            'usage_time' => 120, // デフォルト滞在時間（分）
         ];
     }
 }

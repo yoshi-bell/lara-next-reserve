@@ -183,7 +183,7 @@ npm run dev
 ### テストユーザー情報 (Seederで作成済み)
 開発環境ですぐにログインして動作を確認できます。
 
-*   **メールアドレス:** `user01@test.mail` (〜 `user05@test.mail`)
-*   **パスワード:** `password`
+*   **メールアドレス:** `user01@test.mail` (〜 `user03@test.mail`)
+*   **パスワード:** `usertest`
 
 ```

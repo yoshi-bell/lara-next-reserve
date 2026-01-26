@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成済みの設定済みaxiosを使う
+import { isAxiosError } from "axios"; // 追加
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -27,9 +28,9 @@ export default function LoginPage() {
             // 3. 成功時
             router.push("/"); 
 
-        } catch (err: any) {
+        } catch (err) {
             // エラーハンドリング
-            if (err.response && err.response.data) {
+            if (isAxiosError(err) && err.response && err.response.data) {
                 setError(err.response.data.message || "ログインに失敗しました。");
             } else {
                 setError("予期せぬエラーが発生しました。");
@@ -39,60 +40,62 @@ export default function LoginPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            {/* ↓ 提案コードではここに w-full max-w-md を追加していましたが、元のままにしています */}
-            <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
-                <h1 className="text-2xl font-bold text-center">ログイン</h1>
-                {error && (
-                    <p className="text-red-500 text-center text-sm mt-2">
-                        {error}
-                    </p>
-                )}
-                <form onSubmit={handleSubmit} className="mt-4">
-                    <div className="mb-4">
-                        <label
-                            htmlFor="email"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            メールアドレス
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="メールアドレス"
-                            // ↓ 元のデザインクラスを維持
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label
-                            htmlFor="password"
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                            パスワード
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="パスワード"
-                            // ↓ 元のデザインクラスを維持
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                        >
-                            ログイン
-                        </button>
-                    </div>
-                </form>
+            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="bg-blue-600 px-6 py-4">
+                    <h1 className="text-xl font-bold text-white">Login</h1>
+                </div>
+                
+                <div className="px-8 py-6">
+                    {error && (
+                        <p className="text-red-500 text-center text-sm mb-4">
+                            {error}
+                        </p>
+                    )}
+                    <form onSubmit={handleSubmit} noValidate>
+                        <div className="mb-4">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Email"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-8">
+                            <div className="relative flex items-center border-b border-gray-300 pb-1">
+                                <span className="text-gray-400 mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Password"
+                                    className="w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                ログイン
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

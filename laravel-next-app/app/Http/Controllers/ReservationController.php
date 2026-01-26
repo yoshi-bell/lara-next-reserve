@@ -6,10 +6,11 @@ use App\Models\Reservation;
 use App\Models\ReservationSlot;
 use App\Models\Shop;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreReservationRequest; // 追加
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail; // 追加
-use App\Mail\ReservationCompleted; // 追加
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationCompleted;
 use Carbon\Carbon;
 
 class ReservationController extends Controller
@@ -31,13 +32,9 @@ class ReservationController extends Controller
     /**
      * 予約を作成
      */
-    public function store(Request $request)
+    public function store(StoreReservationRequest $request) // 型変更
     {
-        $request->validate([
-            'shop_id' => ['required', 'exists:shops,id'],
-            'start_at' => ['required', 'date', 'after:now'],
-            'number' => ['required', 'integer', 'min:1'],
-        ]);
+        // バリデーションは自動実行されるため削除
 
         $user = Auth::user();
         $shopId = $request->shop_id;

@@ -35,7 +35,7 @@ export default function RegisterPage() {
             });
 
             // 登録成功
-            router.push("/login");
+            router.push("/thanks");
         } catch (err: any) {
             // エラーハンドリング
             if (err.response && err.response.data) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,6 +29,8 @@ class RegisterController extends Controller
             'gender' => $request->gender,
             'age' => $request->age,
         ]);
+
+        event(new Registered($user));
 
         return response()->json($user, 201);
     }

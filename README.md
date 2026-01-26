@@ -1,33 +1,189 @@
-# Rese（飲食店予約サービス）
+# Rese
 
-飲食店予約サービス「Rese」のフルスタックアプリケーションです。  
-Laravel（バックエンド）とNext.js（フロントエンド）を完全に分離した構成で開発しています。
+ある企業の「外部の飲食店予約サービスを使用する手数料を抑えたい」という要望に応えるために開発された、自社専用の飲食店予約システムです。
 
-## 構成
-- **backend**: Laravel 12 (Laravel Sail)
-- **frontend**: Next.js (App Router, TypeScript, Tailwind CSS)
+< --- トップ画面の画像 (docs-private/yoyaku_ui/shop_all.png) --- >
 
+## 作成した目的
+外部の飲食店予約サービスプラットフォームを利用することによる手数料コストを削減し、自社で顧客データや予約状況を一元管理できるシステムを構築するため。
 
-## セットアップ手順（簡易）
+## アプリケーションURL
+*   **開発環境 (Frontend):** http://localhost:3000
+*   **開発環境 (Backend API):** http://localhost
+*   **メール確認 (Mailpit):** http://localhost:8025
 
-### バックエンド
-```bash
-cd laravel-next-app
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan migrate
+※ 現在はローカル環境 (Docker) での動作を前提としています。
+
+## 他のリポジトリ
+本プロジェクトはモノレポ構成を採用しており、フロントエンドとバックエンドを一つのリポジトリで管理しています。
+
+*   `laravel-next-app/`: バックエンド (Laravel)
+*   `next-frontend-app/`: フロントエンド (Next.js)
+
+## 機能一覧
+*   **会員登録:** 名前、メールアドレス、パスワード等を入力して会員登録。
+*   **ログイン/ログアウト:** メール認証機能付きのセキュアな認証。
+*   **店舗一覧表示:** 全店舗を画像付きカード形式で一覧表示。
+*   **店舗詳細表示:** 店舗の詳細情報と予約フォームを表示。
+*   **店舗検索:** エリア、ジャンル、店名によるリアルタイム検索。
+*   **予約機能:** 日付・時間・人数を指定して予約（在庫管理機能により重複予約を防止）。
+*   **予約管理:** マイページでの予約状況確認とキャンセル機能。
+*   **お気に入り:** 店舗のお気に入り登録・削除と一覧表示。
+*   **メール通知:** 会員登録完了、予約完了、予約リマインダー（来店前日）の自動送信。
+
+## 使用技術(実行環境)
+*   **Docker / Docker Compose**
+*   **Backend:**
+    *   PHP 8.2
+    *   Laravel 11
+    *   MySQL 8.0
+    *   Laravel Sanctum (SPA認証)
+    *   Mailpit (メールテストツール)
+*   **Frontend:**
+    *   TypeScript
+    *   Next.js 15 (App Router)
+    *   Tailwind CSS
+    *   Axios / SWR
+
+## テーブル設計
+
+```mermaid
+erDiagram
+    users {
+        bigint id PK
+        string name
+        string email UK
+        string password
+        string phone_number
+        string gender
+        date birthday
+        timestamp email_verified_at
+        string remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+    shops {
+        bigint id PK
+        string name
+        bigint area_id FK
+        bigint genre_id FK
+        text description
+        string image_url
+        time start_time
+        time end_time
+        int default_capacity
+        int default_stay_time
+        timestamp created_at
+        timestamp updated_at
+    }
+    reservations {
+        bigint id PK
+        bigint user_id FK
+        bigint shop_id FK
+        datetime start_at
+        int number
+        int usage_time
+        timestamp deleted_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    reservation_slots {
+        bigint id PK
+        bigint shop_id FK
+        datetime slot_datetime
+        int max_capacity
+        int current_reserved
+        timestamp created_at
+        timestamp updated_at
+    }
+    favorites {
+        bigint id PK
+        bigint user_id FK
+        bigint shop_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    areas {
+        bigint id PK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
+    genres {
+        bigint id PK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
 ```
 
-### フロントエンド
+## ER図
+
+```mermaid
+erDiagram
+    users ||--o{ reservations : "1:N"
+    users ||--o{ favorites : "1:N"
+    areas ||--o{ shops : "1:N"
+    genres ||--o{ shops : "1:N"
+    shops ||--o{ reservation_slots : "1:N"
+    shops ||--o{ reservations : "1:N"
+    shops ||--o{ favorites : "1:N"
+```
+
+# 環境構築
+
+Docker環境（Docker Desktop等）がインストールされていることを前提とします。
+
+### 1. プロジェクトのクローン
+```bash
+git clone <repository-url>
+cd lara-next-reserve
+```
+
+### 2. バックエンドのセットアップ
+```bash
+cd laravel-next-app
+
+# 依存関係のインストール
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+
+# 環境変数の設定
+cp .env.example .env
+
+# コンテナ起動
+./vendor/bin/sail up -d
+
+# アプリケーションキー生成 & マイグレーション・シード実行
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan storage:link
+```
+
+### 3. フロントエンドのセットアップ
+別ターミナルで実行してください。
 ```bash
 cd next-frontend-app
+
+# 環境変数の設定
+cp .env.local.example .env.local
+# (.env.local に NEXT_PUBLIC_BACKEND_URL=http://localhost を設定)
+
+# 依存関係インストール & サーバー起動
 npm install
 npm run dev
 ```
 
-## 主な機能
-- ユーザー認証（Sanctum / Fortify）
-- 店舗一覧・詳細表示・検索機能
-- 予約機能（空席判定ロジック付き）
-- お気に入り登録機能
-- マイページ（予約管理・お気に入り一覧）
-- 予約リマインダー（バッチ処理）
+## 他に記載することがあれば記述する
+
+### テストユーザー情報 (Seederで作成済み)
+開発環境ですぐにログインして動作を確認できます。
+
+*   **メールアドレス:** `user01@test.mail` (〜 `user05@test.mail`)
+*   **パスワード:** `password`
+
+```

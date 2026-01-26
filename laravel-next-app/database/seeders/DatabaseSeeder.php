@@ -16,10 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            UserSeeder::class, // 追加: テストユーザー作成
             AreaSeeder::class,
             GenreSeeder::class,
             ShopSeeder::class,
-            ReservationSlotSeeder::class, // 追加
+            ReservationSlotSeeder::class,
         ]);
     }
 }

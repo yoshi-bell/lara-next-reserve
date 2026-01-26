@@ -8,6 +8,8 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail; // 追加
+use App\Mail\ReservationCompleted; // 追加
 use Carbon\Carbon;
 
 class ReservationController extends Controller
@@ -53,15 +55,13 @@ class ReservationController extends Controller
         return DB::transaction(function () use ($user, $shop, $startAt, $endAt, $people, $stayMinutes) {
             // 1. 対象スロットをロックして取得
             // shop_id が一致し、かつ時間が startAt以上 endAt未満 の枠
-            // 30分刻みなので、例えば18:00開始120分なら、18:00, 18:30, 19:00, 19:30 の4枠が必要
             $slots = ReservationSlot::where('shop_id', $shop->id)
                 ->where('slot_datetime', '>=', $startAt)
                 ->where('slot_datetime', '<', $endAt)
-                ->lockForUpdate() // ★ 排他制御: 他のアクセスを待機させる
+                ->lockForUpdate()
                 ->get();
 
-            // 2. 整合性チェック: 必要なスロット数が存在するか？
-            // (店舗の休日設定や営業時間外などで枠自体がない場合のエラー)
+            // 2. 整合性チェック
             $requiredSlotsCount = ceil($stayMinutes / 30); 
             if ($slots->count() < $requiredSlotsCount) {
                  return response()->json(['message' => '指定された時間帯は予約できません（枠不足）。'], 400);
@@ -82,8 +82,11 @@ class ReservationController extends Controller
                 'shop_id' => $shop->id,
                 'start_at' => $startAt,
                 'number' => $people,
-                'usage_time' => $stayMinutes, // タイムトラベル対策: スナップショット保存
+                'usage_time' => $stayMinutes,
             ]);
+
+            // 5. 予約完了メール送信
+            Mail::to($user->email)->send(new ReservationCompleted($reservation));
             
             return response()->json([
                 'message' => '予約が完了しました。',

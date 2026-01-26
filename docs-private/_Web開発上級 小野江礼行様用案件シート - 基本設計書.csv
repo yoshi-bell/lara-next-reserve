@@ -1,0 +1,65 @@
+,,,,,,,
+,,,,,,,
+,"Route,Controller",,,,,,
+,,パス,メソッド,ルート先コントローラー,アクション,認証必須,説明
+,,/,GET,-,-(Next.js),,飲食店一覧ページ（フロントエンド）
+,,/detail/{shop_id},GET,-,-(Next.js),,飲食店詳細ページ（フロントエンド）
+,,/login,GET,-,-(Next.js),,ログインページ（フロントエンド）
+,,/register,GET,-,-(Next.js),,会員登録ページ（フロントエンド）
+,,/mypage,GET,-,-(Next.js),○,マイページ（フロントエンド）
+,,/done,GET,-,-(Next.js),○,予約完了ページ（フロントエンド）
+,,/api/shops,GET,ShopController,index,,店舗一覧取得API
+,,/api/shops/{shop},GET,ShopController,show,,店舗詳細取得API
+,,/api/register,POST,RegisterController,store,,会員登録API
+,,/api/login,POST,-,(Closure),,ログインAPI
+,,/api/logout,POST,-,(Closure),○,ログアウトAPI
+,,/api/user,GET,-,(Closure),○,ログインユーザー取得API
+,,/api/reservations,POST,ReservationController,store,○,予約登録API
+,,/api/reservations,GET,ReservationController,index,○,予約一覧取得API
+,,/api/reservations/{reservation},DELETE,ReservationController,destroy,○,予約キャンセルAPI
+,,/api/shops/{shop}/favorite,POST,FavoriteController,store,○,お気に入り追加API
+,,/api/shops/{shop}/favorite,DELETE,FavoriteController,destroy,○,お気に入り削除API
+,,/api/areas,GET,AreaController,index,,エリア一覧取得API
+,,/api/genres,GET,GenreController,index,,ジャンル一覧取得API
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,Model,,,,,,
+,,モデル名,説明,,,,,
+,,User,ユーザー情報（会員）を管理,,,,,
+,,Shop,店舗情報を管理,,,,,
+,,Area,エリア（地域）マスター,,,,,
+,,Genre,ジャンル（飲食店タイプ）マスター,,,,,
+,,Reservation,予約情報を管理,,,,,
+,,ReservationSlot,予約枠（在庫）を管理,,,,,
+,,Favorite,ユーザーのお気に入り店舗を管理,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,View,,,,,,
+,,ページURL (Next.js),画面名称,,,,,
+,,/,飲食店一覧ページ,,,,,
+,,/register,会員登録ページ,,,,,
+,,/thanks,サンクスページ（登録完了）,,,,,
+,,/login,ログインページ,,,,,
+,,/mypage,マイページ,,,,,
+,,/detail/[shop_id],飲食店詳細ページ,,,,,
+,,/done,予約完了ページ,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,バリデーション,,,,,,
+,,機能名 (Controller),,フォーム項目,ルール,,
+,,会員登録 (RegisterController),,名前 (name),必須, 文字列, 最大255文字
+,,,,メールアドレス (email),必須, 文字列, メール形式, 最大255文字, 重複不可
+,,,,パスワード (password),必須, 文字列, 8文字以上
+,,,,電話番号 (phone_number),必須, 文字列, 最大20文字
+,,,,性別 (gender),必須, male/female/other のいずれか
+,,,,年齢 (age),必須, 整数, 0以上
+,,予約登録 (ReservationController),,店舗ID (shop_id),必須, shopsテーブルに存在すること
+,,,,予約日時 (start_at),必須, 日付形式, 現在時刻より未来
+,,,,人数 (number),必須, 整数, 1以上
+,,ログイン (Route Closure),,メールアドレス (email),必須, メール形式
+,,,,パスワード (password),必須,

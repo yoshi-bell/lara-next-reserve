@@ -26,15 +26,16 @@
 #### バックエンド (Laravel) の検証:
 *   [ ] **ルーティング確認 (最重要):**
     *   `lara-next-reserve/laravel-next-app/routes/api.php`
-*   [ ] **モデル定義確認:**
-    *   `lara-next-reserve/laravel-next-app/app/Models/` 配下の各モデル。
-*   [ ] **メール・コマンド確認:**
-    *   `app/Mail/ReservationReminder.php`
-    *   `app/Console/Commands/SendReservationReminders.php`
+*   [ ] **コントローラー確認 (リファクタリング済み):**
+    *   `app/Http/Controllers/Api/AuthenticatedSessionController.php` (ログイン・ログアウト)
+    *   `app/Http/Controllers/Api/UserController.php` (ユーザー情報)
+    *   `app/Http/Controllers/Api/RegisterController.php` (新規登録)
+*   [ ] **テスト確認:**
+    *   `tests/Feature/Auth/AuthenticationTest.php` (認証機能の網羅テスト)
 
 #### フロントエンド (Next.js) の検証:
 *   [ ] **ページ構造の把握:**
-    *   `next-frontend-app/src/app/` 配下のディレクトリ。
+    *   `next-frontend-app/src/app/` 配下の各ページディレクトリ。
 
 ### ステップ 3: UI/UXデザインの確認
 *   [ ] **モックアップ分析:**
@@ -55,12 +56,12 @@
 
 完了していること:
 
-✅ フロントエンド・バックエンドの全機能実装。
-✅ 予約リマインダーメール送信機能（バッチ処理）の動作確認済み。
-✅ README.md の作成（セットアップ手順、ER図等を含む）。
-✅ 基本設計書・テーブル仕様書・機能一覧（CSV）の実装との完全同期。
+✅ 認証機能のリファクタリング（クロージャをコントローラーに分離）完了。
+✅ 認証機能の Feature Test による品質担保済み。
+✅ 予約リマインダーメール送信機能（バッチ処理）の実装・確認済み。
+✅ README.md、基本設計書（CSV）の実装との同期完了。
 
 未完了・次のタスク:
 
-🚀 プロジェクト完了報告と、ユーザーからの実装に関する質疑応答。
-🚀 （必要に応じて）デプロイ手順の確立。
+🚀 ユーザーからの実装に関する質疑応答への対応。
+🚀 本番デプロイの検討（必要に応じて）。

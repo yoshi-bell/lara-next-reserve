@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成したaxiosをインポート
+import { isAxiosError } from "axios"; // isAxiosErrorをインポート
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -36,9 +37,9 @@ export default function RegisterPage() {
 
             // 登録成功
             router.push("/thanks");
-        } catch (err: any) {
+        } catch (err) {
             // エラーハンドリング
-            if (err.response && err.response.data) {
+            if (isAxiosError(err) && err.response && err.response.data) {
                 const errorData = err.response.data;
                 const errorMessage =
                     errorData.message ||

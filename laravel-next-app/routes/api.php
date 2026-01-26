@@ -1,20 +1,22 @@
 <?php
 
 use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\VerifyEmailController; // 追加
+use App\Http\Controllers\Api\VerifyEmailController;
+use App\Http\Controllers\Api\AuthenticatedSessionController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReservationController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // ログインユーザー情報取得
+    Route::get('/user', [UserController::class, 'show']);
+
+    // ログアウト
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     // メール認証済みのみ許可する機能
     Route::middleware('verified')->group(function () {
@@ -30,59 +32,19 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+// 店舗関連
 Route::get('/shops', [ShopController::class, 'index']);
 Route::get('/shops/{shop}', [ShopController::class, 'show']);
-
 Route::get('/areas', [AreaController::class, 'index']);
 Route::get('/genres', [GenreController::class, 'index']);
 
-// 登録
+// 会員登録
 Route::post('/register', [RegisterController::class, 'store']);
+
+// ログイン
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 // メール認証
 Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
-
-// ログイン
-Route::post("/login", function (Request $request) {
-    $credentials = $request->validate([
-        "email" => ["required", "email"],
-        "password" => ["required"],
-    ]);
-
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        // メール認証チェック
-        if (! $user->hasVerifiedEmail()) {
-            Auth::guard("web")->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            
-            return response()->json([
-                "message" => "メール認証が完了していません。メール内のリンクを確認してください。",
-            ], 403);
-        }
-
-        return response()->json($user);
-    }
-
-    return response()->json([
-        "message" => "The provided credentials do not match our records.",
-    ], 401);
-});
-
-// ログアウト
-Route::post("/logout", function (Request $request) {
-    Auth::guard("web")->logout();
-
-    $request->session()->invalidate();
-
-    $request->session()->regenerateToken();
-
-    return response()->noContent();
-});

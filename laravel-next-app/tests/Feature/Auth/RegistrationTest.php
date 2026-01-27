@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 use App\Models\User;
 
@@ -15,6 +17,8 @@ class RegistrationTest extends TestCase
      */
     public function test_new_users_can_register(): void
     {
+        Notification::fake();
+
         $response = $this->postJson('/api/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -26,6 +30,10 @@ class RegistrationTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+
+        // メール認証の通知が送信されたことを確認
+        $user = User::where('email', 'test@example.com')->first();
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     /**

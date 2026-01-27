@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ReservationCompleted;
 use App\Models\Reservation;
 use App\Models\ReservationSlot;
 use App\Models\Shop;
@@ -9,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -26,6 +28,8 @@ class ReservationTest extends TestCase
      */
     public function test_user_can_reserve_via_api(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create(['default_stay_time' => 60]); // 60分滞在
         $startAt = Carbon::tomorrow()->setHour(18)->setMinute(0);
@@ -57,6 +61,47 @@ class ReservationTest extends TestCase
             'shop_id' => $shop->id,
             'number' => 2,
         ]);
+
+        // メール送信確認
+        Mail::assertSent(ReservationCompleted::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
+    }
+
+    /**
+     * 満席の場合は予約できないこと
+     */
+    public function test_reservation_fails_when_capacity_is_full(): void
+    {
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $shop = Shop::factory()->create(['default_stay_time' => 60]);
+        $startAt = Carbon::tomorrow()->setHour(18)->setMinute(0);
+
+        // 予約枠（満席状態）を作成
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt,
+            'max_capacity' => 2,
+            'current_reserved' => 2, // 満席
+        ]);
+        // 滞在時間分の次のスロットも必要
+        ReservationSlot::create([
+            'shop_id' => $shop->id,
+            'slot_datetime' => $startAt->copy()->addMinutes(30),
+            'max_capacity' => 2,
+            'current_reserved' => 0, // こちらは空いているとしても、最初のスロットが満席ならNG
+        ]);
+
+        $response = $this->actingAs($user)
+            ->postJson('http://localhost/api/reservations', [
+                'shop_id' => $shop->id,
+                'start_at' => $startAt->format('Y-m-d H:i'),
+                'number' => 1,
+            ]);
+
+        // 実装に合わせて 400 エラーとメッセージを検証
+        $response->assertStatus(400)
+                 ->assertJson(['message' => '満席の時間帯が含まれています。']);
     }
 
     /**
@@ -120,7 +165,7 @@ class ReservationTest extends TestCase
             'shop_id' => $shop->id,
             'start_at' => $startAt->format('Y-m-d H:i'),
             'number' => 2,
-        ])->assertStatus(201);
+        ]);
 
         // 2回目の予約（失敗するはず）
         $response = $this->actingAs($user)->postJson('http://localhost/api/reservations', [

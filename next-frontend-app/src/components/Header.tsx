@@ -30,7 +30,7 @@ export default function Header({ children }: HeaderProps) {
                     </button>
                     {/* ロゴ */}
                 <Link href="/">
-                    <h1 className="text-3xl font-bold text-blue-600 cursor-pointer">Rese</h1>
+                    <h1 className="text-3xl font-bold text-blue-600 cursor-pointer">lara-next-reserve</h1>
                 </Link>
             </div>
 

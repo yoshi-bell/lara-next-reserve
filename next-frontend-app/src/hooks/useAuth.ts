@@ -45,5 +45,6 @@ export function useAuth({ middleware } : { middleware?: 'auth' | 'guest' } = {})
         isLoading,
         isError: error,
         logout,
+        mutate, // 追加
     };
 }

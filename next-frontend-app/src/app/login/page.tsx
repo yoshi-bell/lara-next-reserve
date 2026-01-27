@@ -4,12 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成済みの設定済みaxiosを使う
 import { isAxiosError } from "axios"; // 追加
+import Header from "@/components/Header"; // Headerをインポート
+import { useAuth } from "@/hooks/useAuth"; // useAuthをインポート
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
+    const { mutate } = useAuth(); // mutateを取得
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,7 +28,10 @@ export default function LoginPage() {
                 password,
             });
 
-            // 3. 成功時
+            // 3. ユーザー情報の再取得 (SWRのキャッシュ更新)
+            await mutate();
+
+            // 4. 成功時
             router.push("/"); 
 
         } catch (err) {
@@ -39,8 +45,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+            <Header />
+            
+            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden mt-12">
                 <div className="bg-blue-600 px-6 py-4">
                     <h1 className="text-xl font-bold text-white">Login</h1>
                 </div>

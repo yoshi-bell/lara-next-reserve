@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成したaxiosをインポート
 import { isAxiosError } from "axios"; // isAxiosErrorをインポート
+import Header from "@/components/Header"; // 追加
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -54,8 +55,10 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+            <Header />
+
+            <div className="w-full max-w-sm bg-white shadow-lg rounded-lg overflow-hidden mt-12 mb-12">
                 <div className="bg-blue-600 px-6 py-4">
                     <h1 className="text-xl font-bold text-white">Registration</h1>
                 </div>

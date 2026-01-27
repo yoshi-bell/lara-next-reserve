@@ -1,4 +1,4 @@
-# Rese 開発計画書 (改訂版)
+# lara-next-reserve 開発計画書 (改訂版)
 
 ## 0. ドキュメント運用方針 (Meta Rules for AI Agent)
 

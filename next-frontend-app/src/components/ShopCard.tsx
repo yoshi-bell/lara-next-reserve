@@ -53,9 +53,10 @@ export default function ShopCard({ shop, priority = false, showConfirmDialog = f
             <div className="relative h-40 w-full">
                 {shop.image_url ? (
                     <Image
-                        src={shop.image_url}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${shop.image_url}`}
                         alt={shop.name}
                         fill
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                         priority={priority}
                         style={{ objectFit: 'cover' }}

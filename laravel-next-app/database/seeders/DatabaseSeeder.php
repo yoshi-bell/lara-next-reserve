@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             GenreSeeder::class,
             ShopSeeder::class,
             ReservationSlotSeeder::class,
+            ReservationSeeder::class, // 追加: ユーザーごとの予約データ生成
         ]);
     }
 }

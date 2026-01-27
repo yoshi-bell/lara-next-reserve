@@ -15,10 +15,10 @@
     <div class="container">
         <div class="header">ご予約のリマインダー</div>
         
-        <p>{{ $reservation->user->name }}様</p>
+    <p>{{ $reservation->user->name }}様</p>
 
-        <p>飲食店予約サービス「Rese」をご利用いただきありがとうございます。<br>
-        明日、以下の内容でご予約を承っております。ご来店をお待ちしております。</p>
+    <p>飲食店予約サービス「lara-next-reserve」をご利用いただきありがとうございます。<br>
+    明日のご予約についてお知らせいたします。</p>
 
         <div class="details">
             <strong>店舗名:</strong> {{ $reservation->shop->name }}<br>

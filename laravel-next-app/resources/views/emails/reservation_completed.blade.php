@@ -14,10 +14,10 @@
     <div class="container">
         <div class="header">予約完了のお知らせ</div>
         
-        <p>{{ $reservation->user->name }}様</p>
+    <p>{{ $reservation->user->name }}様</p>
 
-        <p>飲食店予約サービス「Rese」をご利用いただきありがとうございます。<br>
-        以下の内容でご予約を承りました。</p>
+    <p>飲食店予約サービス「lara-next-reserve」をご利用いただきありがとうございます。<br>
+    以下の内容で予約が確定いたしました。</p>
 
         <div class="details">
             <strong>店舗名:</strong> {{ $reservation->shop->name }}<br>

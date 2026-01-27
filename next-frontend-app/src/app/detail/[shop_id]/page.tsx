@@ -32,17 +32,17 @@ export default function ShopDetailPage() {
                         <h2 className="text-2xl font-bold text-black">{shop.name}</h2>
                     </div>
 
-                    <div className="relative h-80 w-full mb-4 rounded overflow-hidden">
-                        {shop.image_url ? (
-                            <Image
-                                src={shop.image_url}
-                                alt={shop.name}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 600px"
-                                priority
-                                style={{ objectFit: 'cover' }}
-                            />
-                        ) : (
+            <div className="relative w-full h-64 md:h-80 mb-6 shadow-md rounded overflow-hidden">
+                {shop.image_url ? (
+                    <Image
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${shop.image_url}`}
+                        alt={shop.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        priority
+                        unoptimized
+                    />
+                ) : (
                             <div className="flex items-center justify-center h-full bg-gray-200">
                                 <span className="text-gray-500">No Image</span>
                             </div>

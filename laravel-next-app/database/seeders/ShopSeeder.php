@@ -161,16 +161,22 @@ class ShopSeeder extends Seeder
             $area = Area::where('name', $shopData['area'])->first();
             $genre = Genre::where('name', $shopData['genre'])->first();
 
+            // ランダムな設定値を生成
+            $startHour = fake()->randomElement([16, 17, 18]);
+            $endHour = fake()->randomElement([22, 23]);
+            $capacity = fake()->randomElement([10, 20, 30, 40, 50]);
+            $stayTime = fake()->randomElement([60, 90, 120]);
+
             Shop::create([
                 'name' => $shopData['name'],
                 'area_id' => $area->id,
                 'genre_id' => $genre->id,
                 'description' => $shopData['description'],
                 'image_url' => $shopData['image_url'],
-                'start_time' => '17:00:00',
-                'end_time' => '23:00:00',
-                'default_capacity' => 20,
-                'default_stay_time' => 120,
+                'start_time' => sprintf('%02d:00:00', $startHour),
+                'end_time' => sprintf('%02d:00:00', $endHour),
+                'default_capacity' => $capacity,
+                'default_stay_time' => $stayTime,
             ]);
         }
     }

@@ -17,14 +17,23 @@ interface Shop {
 interface ShopCardProps {
     shop: Shop;
     priority?: boolean;
+    showConfirmDialog?: boolean; // 削除時に確認ダイアログを表示するかどうか
 }
 
-export default function ShopCard({ shop, priority = false }: ShopCardProps) {
+export default function ShopCard({ shop, priority = false, showConfirmDialog = false }: ShopCardProps) {
     // ローカルステートは廃止し、SWRのデータを直接参照する
     const { addFavorite, removeFavorite, isMutating } = useFavorite(shop.id);
 
     const handleFavoriteClick = async () => {
         if (isMutating) return;
+
+        // 確認ダイアログが必要な場合（マイページかつスキップ設定OFFなど）
+        if (shop.favorites_exists && showConfirmDialog) {
+            const message = "お気に入りを解除しますか？\n\n※確認ダイアログが不要な方は、マイページ内の「お気に入り解除時の確認を省略」をONにしてください。";
+            if (!window.confirm(message)) {
+                return; // キャンセルされたら何もしない
+            }
+        }
 
         try {
             if (!shop.favorites_exists) {

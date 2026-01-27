@@ -12,28 +12,22 @@
 *   [ ] **直近のワークフロー確認 (`WORKFLOW.md`):**
     *   `docs-private/WORKFLOW.md` の「開発ルール」を最優先で遵守すること。
 *   [ ] **直近の作業ログ確認 (`DEV_LOG.md`):**
-    *   `docs-private/DEV_LOG.md` を読み込み、リファクタリングと日本語化の経緯を特定する。
-*   [ ] **要件と仕様の確認:**
-    *   `docs-private/` 内のCSVファイル群（基本設計書、テーブル仕様書、機能一覧）を確認する。
+    *   `docs-private/DEV_LOG.md` を読み込み、リファクタリング、UI/UX改善、日本語化の経緯を特定する。
 
 ### ステップ 2: 実装状況の検証 (Code Verification)
 
 #### バックエンド (Laravel):
-*   [ ] **コントローラー:** `AuthenticatedSessionController`, `UserController`, `RegisterController` への責務分離が完了。
-*   [ ] **バリデーション:** `app/Http/Requests/` 配下の FormRequest クラス群（日本語化済み）。
-*   [ ] **日本語化設定:** 
-    *   `config/app.php` (ロケール: ja)
-    *   `AppServiceProvider.php` (ロケール強制)
-    *   `bootstrap/app.php` (AuthenticationException の日本語オーバーライド)
-*   [ ] **テスト:** `tests/Feature/` 配下の網羅的なテスト（Green）。
+*   [ ] **コントローラー:** 責務分離済み（`AuthenticatedSession`, `User`, `Register`, `Shop`, `Reservation`, `Favorite`）。
+*   [ ] **バリデーション:** 全て FormRequest クラスへ移行。日本語化・重複予約防止実装済み。
+*   [ ] **日本語化設定:** ロケール `ja` 強制、例外ハンドラーでの日本語メッセージ固定済み。
+*   [ ] **テスト (100% Green):** `tests/Feature/` 配下に `Authentication`, `Registration`, `Reservation`, `Shop`, `MyPage` の各テストが完備。
 
 #### フロントエンド (Next.js):
-*   [ ] **コンポーネント:** `ReservationForm.tsx` の分離が完了。
-*   [ ] **ページ:** `detail/[shop_id]/page.tsx` は表示に特化。
-*   [ ] **バリデーション:** 各フォームに `noValidate` 属性。
+*   [ ] **コンポーネント設計:** `ReservationForm.tsx` が独立。`ShopCard.tsx` はProps `showConfirmDialog` でダイアログ表示を制御。
+*   [ ] **マイページ機能:** お気に入り解除の確認スキップ設定（LocalStorage連動）が実装済み。
 
 ### ステップ 3: 結論の導出と報告
-*   [ ] **現状の判定:** 全機能の実装、リファクタリング、ドキュメント同期が完了。
+*   [ ] **現状の判定:** 基本機能、リファクタリング、品質強化、ドキュメント同期が完了。
 
 ## 2. 重要事項 (Core Rules)
 *   **日本語対応:** 全ての思考と応答を日本語で行うこと。
@@ -41,17 +35,16 @@
 
 ## 3. 想定される結論 (Hypothesis: 2026-01-26時点)
 
-現在のフェーズ: プロジェクト完了
+現在のフェーズ: プロジェクト継続（安定稼働期）
 
 完了していること:
 
-✅ 認証・予約機能の完全なリファクタリング（FormRequest, Controller分離）。
-✅ アプリケーション全体の完全日本語化（システム例外含む）。
-✅ フロントエンドのコンポーネント設計最適化。
-✅ 全主要機能の Feature Test 完備。
-✅ README.md、基本設計書（CSV）の完全同期。
+✅ バックエンド全機能のテスト完備とリファクタリング。
+✅ ユーザー設定（LocalStorage）を含むUI/UXの高度な改善。
+✅ システム例外まで含めた完全日本語化。
+✅ シーディングデータの多様化（リアルなテスト環境）。
 
 未完了・次のタスク:
 
-🚀 プロジェクトの最終確認と完了報告。
-🚀 （必要に応じて）デプロイメント。
+🚀 さらなる機能拡張（例：画像アップロード、店舗管理画面など）。
+🚀 本番環境へのデプロイ。

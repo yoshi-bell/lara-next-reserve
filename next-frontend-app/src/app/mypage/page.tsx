@@ -7,13 +7,36 @@ import Header from "@/components/Header";
 import ShopCard from "@/components/ShopCard";
 import axios from "@/lib/axios";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Mypage() {
     const { user, isLoading: isAuthLoading } = useAuth();
     const { reservations, isLoading: isResLoading, mutate: mutateReservations } = useMyReservations();
     const { favoriteShops, isLoading: isFavLoading } = useMyFavorites();
     const router = useRouter();
+
+    // お気に入り削除確認のスキップ設定
+    const [skipConfirm, setSkipConfirm] = useState(false);
+
+    // 初回ロード時にLocalStorageから設定を読み込む
+    useEffect(() => {
+        const storedSetting = localStorage.getItem("skipFavoriteDeleteConfirm");
+        
+        if (storedSetting === "true") {
+            // setTimeoutでラップして非同期にすることで、
+            // ページロード時の同期的なsetState警告（cascading renders）を回避します。
+            setTimeout(() => {
+                setSkipConfirm(true);
+            }, 0);
+        }
+    }, []);
+
+    // 設定変更時にLocalStorageに保存する
+    const handleSkipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const isChecked = e.target.checked;
+        setSkipConfirm(isChecked);
+        localStorage.setItem("skipFavoriteDeleteConfirm", isChecked.toString());
+    };
 
     // 未ログイン時のリダイレクト
     useEffect(() => {
@@ -101,13 +124,28 @@ export default function Mypage() {
 
                     {/* 右側: お気に入り店舗 (幅広め) */}
                     <div className="md:w-2/3 lg:w-2/3">
-                        <h3 className="text-xl font-bold mb-6 text-black">お気に入り店舗</h3>
+                        <div className="flex justify-between items-end mb-6">
+                            <h3 className="text-xl font-bold text-black">お気に入り店舗</h3>
+                            <label className="flex items-center text-sm text-gray-600 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    className="mr-2"
+                                    checked={skipConfirm}
+                                    onChange={handleSkipChange}
+                                />
+                                お気に入り解除時の確認を省略
+                            </label>
+                        </div>
                         {(!favoriteShops || favoriteShops.length === 0) ? (
                             <p className="text-gray-500">お気に入り店舗はありません。</p>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {favoriteShops.map((shop) => (
-                                    <ShopCard key={shop.id} shop={shop} />
+                                    <ShopCard 
+                                        key={shop.id} 
+                                        shop={shop} 
+                                        showConfirmDialog={!skipConfirm}
+                                    />
                                 ))}
                             </div>
                         )}

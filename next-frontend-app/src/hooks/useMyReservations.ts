@@ -20,7 +20,7 @@ interface Shop {
     genre: Genre;
 }
 
-interface Reservation {
+export interface Reservation {
     id: number;
     shop_id: number;
     start_at: string;
@@ -34,8 +34,9 @@ const fetcher = async (url: string) => {
     return res.data;
 };
 
-export function useMyReservations() {
-    const { data, error, isLoading, mutate } = useSWR<Reservation[]>('/api/reservations', fetcher);
+export function useMyReservations(type: 'future' | 'history' = 'future') {
+    const url = type === 'history' ? '/api/reservations?type=history' : '/api/reservations';
+    const { data, error, isLoading, mutate } = useSWR<Reservation[]>(url, fetcher);
 
     return {
         reservations: data,

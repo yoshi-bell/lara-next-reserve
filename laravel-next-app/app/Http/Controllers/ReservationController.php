@@ -18,13 +18,23 @@ class ReservationController extends Controller
     /**
      * ログインユーザーの予約一覧を取得
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $reservations = Reservation::where('user_id', $user->id)
-            ->with(['shop.area', 'shop.genre'])
-            ->orderBy('start_at', 'asc')
-            ->get();
+        $query = Reservation::where('user_id', $user->id)
+            ->with(['shop.area', 'shop.genre']);
+
+        if ($request->type === 'history') {
+            // 過去の予約（降順）
+            $query->where('start_at', '<', now())
+                  ->orderBy('start_at', 'desc');
+        } else {
+            // 未来の予約（昇順：デフォルト）
+            $query->where('start_at', '>=', now())
+                  ->orderBy('start_at', 'asc');
+        }
+
+        $reservations = $query->get();
 
         return response()->json($reservations);
     }

@@ -2,7 +2,7 @@
 
 ある企業の「外部の飲食店予約サービスを使用する手数料を抑えたい」という要望に応えるために開発された、自社専用の飲食店予約システムです。
 
-< --- トップ画面の画像 (docs-private/yoyaku_ui/shop_all.png) --- >
+![トップ画面](docs/images/toppage-ss.png)
 
 ## 作成した目的
 外部の飲食店予約サービスプラットフォームを利用することによる手数料コストを削減し、自社で顧客データや予約状況を一元管理できるシステムを構築するため。
@@ -47,7 +47,7 @@
     *   Mailpit (メールテストツール)
 *   **Frontend:**
     *   TypeScript
-    *   Next.js 15 (App Router)
+    *   Next.js 16 (App Router)
     *   Tailwind CSS
     *   Axios / SWR
 
@@ -142,7 +142,7 @@ Docker環境（Docker Desktop等）がインストールされていることを
 
 ### 1. プロジェクトのクローン
 ```bash
-git clone <repository-url>
+git clone https://github.com/yoshi-bell/lara-next-reserve.git
 cd lara-next-reserve
 ```
 

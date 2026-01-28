@@ -71,6 +71,7 @@ erDiagram
         bigint shop_id FK
         datetime start_at "UK(user_id, start_at)"
         int number
+        int usage_time "スナップショット"
         timestamp deleted_at "論理削除用"
         timestamp created_at
         timestamp updated_at

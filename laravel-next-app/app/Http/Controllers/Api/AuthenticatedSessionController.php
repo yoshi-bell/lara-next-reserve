@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         return response()->json([
-            'message' => 'The provided credentials do not match our records.',
+            'message' => trans('auth.failed'),
         ], 401);
     }
 

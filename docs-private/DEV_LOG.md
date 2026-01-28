@@ -231,9 +231,17 @@
 *   **Prompt Repetitionの実装:** 重要なルールやファイル全体を「2回読み込む」よう指示するプロンプトを埋め込み、AIのコンテキスト理解度を強化。
 *   **開発計画書の再編:** `DEVELOPMENT_PLAN.md` を「プロジェクト憲法（絶対ルール）」と「技術仕様（設計）」に明確に分離。
 
+#### 構造のリファクタリング (Architectural Refactoring)
+*   **Serviceパターンの導入:** 
+    *   `ReservationController` に集中していたビジネスロジック（在庫管理、トランザクション、メール送信）を `app/Services/ReservationService.php` に完全移譲。
+    *   コントローラーの責務を「リクエスト受付とレスポンス返却」に限定し、Fat Controller化を解消。
+*   **シーダーのロジック共通化:**
+    *   `ReservationSeeder` も `ReservationService` を利用するようにリファクタリング。
+    *   予約作成のコアロジックを一本化し、コードの重複を排除。シーダー実行時は `Mail::fake()` により不要な通知を抑制。
+
 #### 環境構築手順の検証 (Acceptance Testing)
 *   **クリーン環境での再現性テスト:** GitHubから新規ディレクトリへのクローンを行い、`README.md` の手順のみでシステムが完動することを検証。
 *   **`.env.local.example` の修正:** 検証プロセス中にフロントエンドのサンプル設定ファイルが `.gitignore` により漏れていた不具合を特定し、修正・反映。
 
 ### 3. 最終状態の確認
-*   バックエンドの全テスト (34 tests, 82 assertions) が PASS し、ロジック変更によるデグレードがないことを確認済み。
+*   バックエンドの全テスト (34 tests, 82 assertions) が PASS し、大規模リファクタリングによるデグレードがないことを確認済み。

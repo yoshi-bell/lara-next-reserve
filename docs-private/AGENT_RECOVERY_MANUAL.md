@@ -30,6 +30,7 @@
 
 #### バックエンド (Laravel):
 *   [ ] **コントローラー:** 責務分離済み（`AuthenticatedSession`, `User`, `Register`, `Shop`, `Reservation`, `Favorite`）。
+*   [ ] **サービス:** `ReservationService` にビジネスロジック（在庫管理・予約作成）が集約済み。
 *   [ ] **バリデーション・メッセージ:** 
     *   全て FormRequest クラスへ移行済み。
     *   認証エラー等のメッセージは `lang/ja/` で一元管理され、ハードコードは排除済み。

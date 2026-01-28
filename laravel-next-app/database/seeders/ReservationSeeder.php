@@ -6,17 +6,29 @@ use App\Models\Reservation;
 use App\Models\ReservationSlot;
 use App\Models\Shop;
 use App\Models\User;
+use App\Services\ReservationService;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Exception;
 
 class ReservationSeeder extends Seeder
 {
+    protected $reservationService;
+
+    public function __construct(ReservationService $reservationService)
+    {
+        $this->reservationService = $reservationService;
+    }
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        // シーダー実行時はメールを送信しない
+        Mail::fake();
+
         $users = User::all();
         $shops = Shop::all();
 
@@ -54,21 +66,26 @@ class ReservationSeeder extends Seeder
                 continue;
             }
 
-            // 店舗の容量チェック（スロット確保）
-            if (!$this->ensureSlots($shop, $startAt, $stayTime, $number)) {
+            // スロットの準備と容量チェック
+            // ※ここでのチェックは「スロットを作る」ため。
+            //   実際の予約作成時のロック＆チェックはServiceが行う。
+            if (!$this->prepareSlots($shop, $startAt, $stayTime, $number)) {
                 continue; // 満席などで確保できなかった場合
             }
 
-            // 予約作成
-            Reservation::create([
-                'user_id' => $user->id,
-                'shop_id' => $shop->id,
-                'start_at' => $startAt,
-                'number' => $number,
-                'usage_time' => $stayTime,
-            ]);
-
-            $createdCount++;
+            try {
+                // Serviceを使って予約作成（在庫更新、トランザクション含む）
+                $this->reservationService->createReservation(
+                    $user,
+                    $shop->id,
+                    $startAt,
+                    $number
+                );
+                $createdCount++;
+            } catch (Exception $e) {
+                // Service側で競合などで失敗した場合はスキップして再試行
+                continue;
+            }
         }
     }
 
@@ -79,25 +96,20 @@ class ReservationSeeder extends Seeder
         $endHour = (int) substr($shop->end_time, 0, 2);
         
         // 滞在時間を考慮した最終予約可能時間（閉店時間の少し前まで）
-        // 簡易的に「閉店の1時間前」を最終受付とする
         $lastOrderHour = max($startHour, $endHour - 1); 
 
         $baseDate = $type === 'future' 
             ? Carbon::tomorrow()->addDays(rand(0, 14)) // 明日〜2週間後
             : Carbon::yesterday()->subDays(rand(0, 14)); // 昨日〜2週間前
 
-        // 営業時間内でランダムな時間を生成 (30分刻み)
         $hour = rand($startHour, $lastOrderHour);
         $minute = rand(0, 1) * 30;
 
-        // 生成された時間が閉店時間を超えないか最終チェック（念の為）
-        // 例えば 22:00 閉店で 22:00 開始はNG、21:30開始はOKなど
-        // ここでは lastOrderHour で制御済みだが、閉店時間を超える場合は調整
         $dt = $baseDate->copy()->setTime($hour, $minute, 0);
         $closeTime = $baseDate->copy()->setTime($endHour, 0, 0);
 
         if ($dt->gte($closeTime)) {
-            $dt->setTime($startHour, 0, 0); // 失敗したら開店時間にフォールバック
+            $dt->setTime($startHour, 0, 0);
         }
 
         return $dt;
@@ -115,12 +127,15 @@ class ReservationSeeder extends Seeder
             ->exists();
     }
 
-    private function ensureSlots($shop, $startAt, $stayTime, $number)
+    /**
+     * 指定された日時のスロットが存在することを確認し、なければ作成する。
+     * また、現在の空き容量が十分かチェックする。
+     */
+    private function prepareSlots($shop, $startAt, $stayTime, $number)
     {
         $slotsNeeded = ceil($stayTime / 30);
         $current = $startAt->copy();
         
-        // 容量チェック
         for ($i = 0; $i < $slotsNeeded; $i++) {
             $slot = ReservationSlot::firstOrNew([
                 'shop_id' => $shop->id,
@@ -130,25 +145,16 @@ class ReservationSeeder extends Seeder
                 'current_reserved' => 0,
             ]);
 
+            // 新規作成の場合は保存
+            if (!$slot->exists) {
+                $slot->save();
+            }
+
+            // 容量チェック
             if (($slot->max_capacity - $slot->current_reserved) < $number) {
                 return false; // 容量不足
             }
-            $current->addMinutes(30);
-        }
-
-        // 更新実行
-        $current = $startAt->copy();
-        for ($i = 0; $i < $slotsNeeded; $i++) {
-            $slot = ReservationSlot::firstOrNew([
-                'shop_id' => $shop->id,
-                'slot_datetime' => $current,
-            ], [
-                'max_capacity' => $shop->default_capacity ?? 10,
-                'current_reserved' => 0,
-            ]);
-
-            $slot->current_reserved += $number;
-            $slot->save();
+            
             $current->addMinutes(30);
         }
 

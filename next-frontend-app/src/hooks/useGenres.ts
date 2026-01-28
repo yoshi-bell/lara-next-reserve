@@ -2,7 +2,7 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios';
 
-interface Genre {
+export interface Genre {
     id: number;
     name: string;
 }

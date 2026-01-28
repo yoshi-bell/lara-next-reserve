@@ -6,6 +6,7 @@ import { useGenres } from "@/hooks/useGenres";
 import { useState } from "react";
 import ShopCard from "@/components/ShopCard";
 import Header from "@/components/Header";
+import ShopSearchFilter from "@/components/ShopSearchFilter";
 
 export default function ShopsPage() {
     const [selectedArea, setSelectedArea] = useState("");
@@ -28,40 +29,16 @@ export default function ShopsPage() {
         <div className="min-h-screen bg-gray-100">
             {/* 共通ヘッダーに検索バーを差し込む */}
             <Header>
-                <div className="flex bg-white rounded shadow-md overflow-hidden w-full max-w-xl">
-                    <select 
-                        className="p-2 border-r border-gray-200 text-gray-700 outline-none cursor-pointer text-sm bg-white"
-                        value={selectedArea}
-                        onChange={(e) => setSelectedArea(e.target.value)}
-                    >
-                        <option value="">All area</option>
-                        {areas?.map(area => (
-                            <option key={area.id} value={area.id}>{area.name}</option>
-                        ))}
-                    </select>
-                    <select 
-                        className="p-2 border-r border-gray-200 text-gray-700 outline-none cursor-pointer text-sm bg-white"
-                        value={selectedGenre}
-                        onChange={(e) => setSelectedGenre(e.target.value)}
-                    >
-                        <option value="">All genre</option>
-                        {genres?.map(genre => (
-                            <option key={genre.id} value={genre.id}>{genre.name}</option>
-                        ))}
-                    </select>
-                    <div className="flex items-center p-2 flex-grow">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400 mr-2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 105.197 5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
-                        <input 
-                            type="text" 
-                            placeholder="Search ..." 
-                            className="outline-none text-gray-700 text-sm w-full"
-                            value={searchName}
-                            onChange={(e) => setSearchName(e.target.value)}
-                        />
-                    </div>
-                </div>
+                <ShopSearchFilter
+                    selectedArea={selectedArea}
+                    onAreaChange={setSelectedArea}
+                    selectedGenre={selectedGenre}
+                    onGenreChange={setSelectedGenre}
+                    searchName={searchName}
+                    onNameChange={setSearchName}
+                    areas={areas}
+                    genres={genres}
+                />
             </Header>
 
             {/* 店舗一覧 */}

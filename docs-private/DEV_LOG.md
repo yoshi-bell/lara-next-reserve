@@ -241,6 +241,12 @@
 *   **マジックナンバーの排除:**
     *   予約枠の間隔（30分）を `ReservationSlot::SLOT_INTERVAL` 定数として定義し、Service、Seeder、Controller全体で使用するように統一。将来の仕様変更への耐性を向上。
 
+#### フロントエンドのリファクタリング (Frontend Refactoring)
+*   **コンポーネントの責務分離:**
+    *   `app/page.tsx` に混在していた検索・フィルターUIを `components/ShopSearchFilter.tsx` に切り出し。トップページの見通しを改善。
+*   **TypeScript型の整合性向上:**
+    *   `useAreas.ts` および `useGenres.ts` において、内部インターフェースを `export` するよう修正し、他コンポーネントからの安全な型利用を可能にした。
+
 #### 環境構築手順の検証 (Acceptance Testing)
 *   **クリーン環境での再現性テスト:** GitHubから新規ディレクトリへのクローンを行い、`README.md` の手順のみでシステムが完動することを検証。
 *   **`.env.local.example` の修正:** 検証プロセス中にフロントエンドのサンプル設定ファイルが `.gitignore` により漏れていた不具合を特定し、修正・反映。

@@ -2,7 +2,7 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios';
 
-interface Area {
+export interface Area {
     id: number;
     name: string;
 }

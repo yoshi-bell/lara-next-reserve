@@ -38,7 +38,7 @@ class ReservationSlotSeeder extends Seeder
                         'current_reserved' => 0,
                     ]);
 
-                    $startTime->addMinutes(30);
+                    $startTime->addMinutes(ReservationSlot::SLOT_INTERVAL);
                 }
 
                 $currentDate->addDay();

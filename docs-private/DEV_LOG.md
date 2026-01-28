@@ -238,6 +238,8 @@
 *   **シーダーのロジック共通化:**
     *   `ReservationSeeder` も `ReservationService` を利用するようにリファクタリング。
     *   予約作成のコアロジックを一本化し、コードの重複を排除。シーダー実行時は `Mail::fake()` により不要な通知を抑制。
+*   **マジックナンバーの排除:**
+    *   予約枠の間隔（30分）を `ReservationSlot::SLOT_INTERVAL` 定数として定義し、Service、Seeder、Controller全体で使用するように統一。将来の仕様変更への耐性を向上。
 
 #### 環境構築手順の検証 (Acceptance Testing)
 *   **クリーン環境での再現性テスト:** GitHubから新規ディレクトリへのクローンを行い、`README.md` の手順のみでシステムが完動することを検証。

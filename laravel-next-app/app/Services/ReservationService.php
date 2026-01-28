@@ -41,7 +41,7 @@ class ReservationService
             // 2. 整合性チェック (必要なスロット数が確保できているか)
             // 該当する時間のスロットレコードが存在しない場合は「枠不足」とみなす
             // (シーダー等でスロットが作られていない時間帯への予約防止)
-            $requiredSlotsCount = ceil($stayMinutes / 30); 
+            $requiredSlotsCount = ceil($stayMinutes / ReservationSlot::SLOT_INTERVAL); 
             if ($slots->count() < $requiredSlotsCount) {
                  throw new Exception('指定された時間帯は予約できません（枠不足）。');
             }

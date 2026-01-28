@@ -102,8 +102,9 @@ class ReservationSeeder extends Seeder
             ? Carbon::tomorrow()->addDays(rand(0, 14)) // 明日〜2週間後
             : Carbon::yesterday()->subDays(rand(0, 14)); // 昨日〜2週間前
 
+        // 営業時間内でランダムな時間を生成 (スロット間隔刻み)
         $hour = rand($startHour, $lastOrderHour);
-        $minute = rand(0, 1) * 30;
+        $minute = rand(0, 60 / ReservationSlot::SLOT_INTERVAL - 1) * ReservationSlot::SLOT_INTERVAL;
 
         $dt = $baseDate->copy()->setTime($hour, $minute, 0);
         $closeTime = $baseDate->copy()->setTime($endHour, 0, 0);
@@ -133,7 +134,7 @@ class ReservationSeeder extends Seeder
      */
     private function prepareSlots($shop, $startAt, $stayTime, $number)
     {
-        $slotsNeeded = ceil($stayTime / 30);
+        $slotsNeeded = ceil($stayTime / ReservationSlot::SLOT_INTERVAL);
         $current = $startAt->copy();
         
         for ($i = 0; $i < $slotsNeeded; $i++) {
@@ -155,7 +156,7 @@ class ReservationSeeder extends Seeder
                 return false; // 容量不足
             }
             
-            $current->addMinutes(30);
+            $current->addMinutes(ReservationSlot::SLOT_INTERVAL);
         }
 
         return true;

@@ -89,7 +89,6 @@ erDiagram
         datetime start_at
         int number
         int usage_time
-        timestamp deleted_at
         timestamp created_at
         timestamp updated_at
     }

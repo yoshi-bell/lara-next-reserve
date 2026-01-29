@@ -228,17 +228,16 @@ class ReservationTest extends TestCase
     }
 
     /**
-     * 予約の論理削除（Soft Delete）が機能することをテスト
+     * 予約の物理削除が機能することをテスト
      */
-    public function test_reservation_can_be_soft_deleted(): void
+    public function test_reservation_can_be_deleted(): void
     {
         $reservation = Reservation::factory()->create();
 
         $reservation->delete();
 
-        // データベースには存在するが、通常のクエリでは取得できない
-        $this->assertSoftDeleted('reservations', ['id' => $reservation->id]);
+        // データベースから完全に削除されていること
+        $this->assertDatabaseMissing('reservations', ['id' => $reservation->id]);
         $this->assertCount(0, Reservation::all());
-        $this->assertCount(1, Reservation::withTrashed()->get());
     }
 }

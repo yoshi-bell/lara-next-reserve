@@ -34,7 +34,7 @@ reservations,user_id,BIGINT,,,TRUE,users(id),複合ユニーク(user_id, start_a
 reservations,shop_id,BIGINT,,,TRUE,shops(id),
 reservations,start_at,DATETIME,,,TRUE,,予約開始日時, 複合ユニーク(user_id, start_at)
 reservations,number,INTEGER,,,TRUE,,予約人数
-reservations,deleted_at,TIMESTAMP,,,,,論理削除（キャンセル用）
+reservations,usage_time,INTEGER,,,TRUE,,予約時の滞在時間(分)
 reservations,created_at,TIMESTAMP,,,,,
 reservations,updated_at,TIMESTAMP,,,,,
 favorites,id,BIGINT,TRUE,,TRUE,,

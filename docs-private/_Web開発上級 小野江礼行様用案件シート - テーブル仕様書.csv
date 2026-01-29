@@ -62,7 +62,6 @@ shop_id,BIGINT,,,TRUE,shops(id),,
 start_at,DATETIME,,,TRUE,,予約開始日時,複合ユニーク(user_id　start_at)
 number,INTEGER,,,TRUE,,予約人数,
 usage_time,INTEGER,,,TRUE,,予約時の滞在時間(分),スナップショット保存用
-deleted_at,TIMESTAMP,,,,,論理削除（キャンセル用）,
 created_at,TIMESTAMP,,,,,,
 updated_at,TIMESTAMP,,,,,,
 ,,,,,,,

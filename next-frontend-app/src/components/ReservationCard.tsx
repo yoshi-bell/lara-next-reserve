@@ -15,7 +15,10 @@ export default function ReservationCard({ reservation, index = 0, onCancel, isHi
     const title = isHistory ? "来店履歴" : `予約${index + 1}`;
 
     return (
-        <div className={`${bgColor} rounded-lg shadow-lg p-6 text-white relative h-full flex flex-col`}>
+        <div 
+            className={`${bgColor} rounded-lg shadow-lg p-6 text-white relative h-full flex flex-col`}
+            data-testid="reservation-card"
+        >
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-4">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -29,6 +32,7 @@ export default function ReservationCard({ reservation, index = 0, onCancel, isHi
                     <button 
                         onClick={() => onCancel(reservation.id)}
                         className="bg-blue-500 hover:bg-blue-400 rounded-full p-1 transition"
+                        aria-label="予約をキャンセル"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -44,11 +48,11 @@ export default function ReservationCard({ reservation, index = 0, onCancel, isHi
                 </div>
                 <div className="flex items-center">
                     <span className="w-20">Date</span>
-                    <span>{reservation.start_at.split(/[ T]/)[0]}</span>
+                    <span>{new Date(reservation.start_at).toLocaleDateString('ja-JP')}</span>
                 </div>
                 <div className="flex items-center">
                     <span className="w-20">Time</span>
-                    <span>{reservation.start_at.split(/[ T]/)[1]?.substring(0, 5)}</span>
+                    <span>{new Date(reservation.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                 </div>
                 <div className="flex items-center">
                     <span className="w-20">Number</span>

@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreignId('shop_id')->constrained()->cascadeOnDelete();
             $table->dateTime('start_at');
             $table->integer('number');
-            $table->integer('usage_time'); // 予約時の滞在時間（分）をスナップショットとして保存
-            $table->softDeletes();
+            $table->integer('usage_time')->comment('予約時の滞在時間(分)');
             $table->timestamps();
 
+            // 複合ユニーク制約: 同一ユーザーが同じ日時に重複して予約できないようにする
             $table->unique(['user_id', 'start_at']);
         });
     }

@@ -60,7 +60,7 @@ class MyPageTest extends TestCase
     }
 
     /**
-     * 自分の予約をキャンセル（論理削除）できる
+     * 自分の予約をキャンセル（物理削除）できる
      */
     public function test_user_can_cancel_own_reservation(): void
     {
@@ -80,7 +80,7 @@ class MyPageTest extends TestCase
         $response = $this->actingAs($user)->deleteJson('http://localhost/api/reservations/' . $reservation->id);
 
         $response->assertStatus(200);
-        $this->assertSoftDeleted('reservations', ['id' => $reservation->id]);
+        $this->assertDatabaseMissing('reservations', ['id' => $reservation->id]);
     }
 
     /**

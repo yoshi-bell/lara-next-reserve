@@ -18,7 +18,7 @@ class ReminderTest extends TestCase
     /**
      * リマインダーメールが送信されること
      */
-    public function test_reminder_email_is_sent(): void
+    public function test_リマインダーメールが送信される(): void
     {
         Mail::fake();
 
@@ -47,7 +47,7 @@ class ReminderTest extends TestCase
     /**
      * 対象外（当日や明後日）の予約にはメールが送信されないこと
      */
-    public function test_reminder_email_is_not_sent_for_non_target_dates(): void
+    public function test_対象外の日付には送信されない(): void
     {
         Mail::fake();
 

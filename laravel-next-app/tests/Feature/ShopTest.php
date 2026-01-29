@@ -15,20 +15,20 @@ class ShopTest extends TestCase
     /**
      * 店舗一覧が取得できること
      */
-    public function test_can_fetch_shop_list(): void
+    public function test_店舗一覧が取得できる(): void
     {
         Shop::factory()->count(3)->create();
 
         $response = $this->getJson('/api/shops');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+            ->assertJsonCount(3);
     }
 
     /**
      * エリアで絞り込みができること
      */
-    public function test_can_filter_shops_by_area(): void
+    public function test_エリアで絞り込みができる(): void
     {
         $area1 = Area::factory()->create(['name' => 'Tokyo']);
         $area2 = Area::factory()->create(['name' => 'Osaka']);
@@ -41,13 +41,13 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?area_id=' . $area1->id);
 
         $response->assertStatus(200)
-                 ->assertJsonCount(1);
+            ->assertJsonCount(1);
     }
 
     /**
      * ジャンルで絞り込みができること
      */
-    public function test_can_filter_shops_by_genre(): void
+    public function test_ジャンルで絞り込みができる(): void
     {
         $genre1 = Genre::factory()->create(['name' => 'Sushi']);
         $genre2 = Genre::factory()->create(['name' => 'Ramen']);
@@ -59,13 +59,13 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?genre_id=' . $genre1->id);
 
         $response->assertStatus(200)
-                 ->assertJsonCount(1);
+            ->assertJsonCount(1);
     }
 
     /**
      * 店名で部分一致検索ができること
      */
-    public function test_can_search_shops_by_name(): void
+    public function test_店名で検索ができる(): void
     {
         Shop::factory()->create(['name' => 'Sushi Tarou']);
         Shop::factory()->create(['name' => 'Ramen Jiro']);
@@ -75,13 +75,13 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?name=Sushi');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(2); // Tarou と Hanako がヒットするはず
+            ->assertJsonCount(2); // Tarou と Hanako がヒットするはず
     }
 
     /**
      * 店舗詳細が取得できること
      */
-    public function test_can_fetch_shop_detail(): void
+    public function test_店舗詳細が取得できる(): void
     {
         $shop = Shop::factory()->create([
             'name' => 'My Shop',
@@ -91,10 +91,10 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops/' . $shop->id);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'id' => $shop->id,
-                     'name' => 'My Shop',
-                     'description' => 'Delicious food',
-                 ]);
+            ->assertJson([
+                'id' => $shop->id,
+                'name' => 'My Shop',
+                'description' => 'Delicious food',
+            ]);
     }
 }

@@ -26,7 +26,7 @@ class AuthenticationTest extends TestCase
     /**
      * 正しい認証情報でログインできるか
      */
-    public function test_users_can_authenticate(): void
+    public function test_ユーザーがログインできる(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
@@ -44,7 +44,7 @@ class AuthenticationTest extends TestCase
     /**
      * 間違ったパスワードでログインできないか
      */
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function test_パスワードが間違っているとログインできない(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
@@ -62,7 +62,7 @@ class AuthenticationTest extends TestCase
     /**
      * メール未認証ユーザーはログインできないか
      */
-    public function test_users_can_not_authenticate_without_email_verification(): void
+    public function test_メール未認証だとログインできない(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => null,
@@ -80,7 +80,7 @@ class AuthenticationTest extends TestCase
     /**
      * 必須項目が不足している場合はログインできない（バリデーション）
      */
-    public function test_users_can_not_authenticate_with_empty_fields(): void
+    public function test_必須項目が空だとログインできない(): void
     {
         $response = $this->postJson('/api/login', [
             'email' => '',
@@ -88,13 +88,13 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email', 'password']);
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 
     /**
      * ログアウトできるか
      */
-    public function test_users_can_logout(): void
+    public function test_ログアウトできる(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
@@ -108,7 +108,7 @@ class AuthenticationTest extends TestCase
     /**
      * ログイン中のユーザー情報を取得できるか
      */
-    public function test_authenticated_user_can_get_their_information(): void
+    public function test_ログイン中のユーザー情報を取得できる(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
@@ -118,9 +118,9 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user, 'web')->getJson('/api/user');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'id' => $user->id,
-                     'email' => $user->email,
-                 ]);
+            ->assertJson([
+                'id' => $user->id,
+                'email' => $user->email,
+            ]);
     }
 }

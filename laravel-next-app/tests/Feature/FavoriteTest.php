@@ -20,7 +20,7 @@ class FavoriteTest extends TestCase
     /**
      * ログインユーザーがお気に入り登録できること
      */
-    public function test_user_can_add_favorite(): void
+    public function test_お気に入り登録ができる(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create();
@@ -38,7 +38,7 @@ class FavoriteTest extends TestCase
     /**
      * ログインユーザーがお気に入りを解除できること
      */
-    public function test_user_can_remove_favorite(): void
+    public function test_お気に入り解除ができる(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create();
@@ -61,7 +61,7 @@ class FavoriteTest extends TestCase
     /**
      * 未ログインユーザーはお気に入り登録できないこと
      */
-    public function test_guest_cannot_add_favorite(): void
+    public function test_未ログインだとお気に入り登録できない(): void
     {
         $shop = Shop::factory()->create();
 
@@ -76,7 +76,7 @@ class FavoriteTest extends TestCase
      * 現状のコントローラーを確認する必要があるが、一旦一般的な挙動として
      * 「エラーにならず、DBに1件だけある状態」を確認する。
      */
-    public function test_user_cannot_add_duplicate_favorite(): void
+    public function test_重複してお気に入り登録できない(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create();

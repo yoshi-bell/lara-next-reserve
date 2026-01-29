@@ -15,7 +15,7 @@ class RegistrationTest extends TestCase
     /**
      * 新規ユーザー登録ができる
      */
-    public function test_new_users_can_register(): void
+    public function test_新規ユーザー登録ができる(): void
     {
         Notification::fake();
 
@@ -39,18 +39,18 @@ class RegistrationTest extends TestCase
     /**
      * 必須項目不足でバリデーションエラーになる
      */
-    public function test_registration_validation_required_fields(): void
+    public function test_必須項目が不足していると登録できない(): void
     {
         $response = $this->postJson('/api/register', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'email', 'password', 'phone_number', 'gender', 'age']);
+            ->assertJsonValidationErrors(['name', 'email', 'password', 'phone_number', 'gender', 'age']);
     }
 
     /**
      * パスワードが短いとエラーになる
      */
-    public function test_registration_validation_password_length(): void
+    public function test_パスワードが短いと登録できない(): void
     {
         $response = $this->postJson('/api/register', [
             'name' => 'Test User',
@@ -62,13 +62,13 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['password']);
+            ->assertJsonValidationErrors(['password']);
     }
 
     /**
      * メールアドレスが重複しているとエラーになる
      */
-    public function test_registration_validation_email_unique(): void
+    public function test_メールアドレスが重複していると登録できない(): void
     {
         User::factory()->create([
             'email' => 'test@example.com',
@@ -84,6 +84,6 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['email']);
     }
 }

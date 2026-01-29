@@ -23,7 +23,7 @@ class MyPageTest extends TestCase
     /**
      * 自分の予約一覧を取得できる
      */
-    public function test_user_can_get_my_reservations(): void
+    public function test_自分の予約一覧を取得できる(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $otherUser = User::factory()->create(['email_verified_at' => now()]);
@@ -42,7 +42,7 @@ class MyPageTest extends TestCase
     /**
      * 自分のお気に入り一覧を取得できる
      */
-    public function test_user_can_get_my_favorites(): void
+    public function test_自分のお気に入り一覧を取得できる(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create();
@@ -62,7 +62,7 @@ class MyPageTest extends TestCase
     /**
      * 自分の予約をキャンセル（物理削除）できる
      */
-    public function test_user_can_cancel_own_reservation(): void
+    public function test_自分の予約をキャンセルできる(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $reservation = Reservation::factory()->create(['user_id' => $user->id]);
@@ -86,7 +86,7 @@ class MyPageTest extends TestCase
     /**
      * 他人の予約はキャンセルできない
      */
-    public function test_user_cannot_cancel_others_reservation(): void
+    public function test_他人の予約はキャンセルできない(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $otherUser = User::factory()->create(['email_verified_at' => now()]);

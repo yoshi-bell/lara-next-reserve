@@ -26,7 +26,7 @@ class ReservationTest extends TestCase
     /**
      * API経由で予約ができること
      */
-    public function test_user_can_reserve_via_api(): void
+    public function test_予約ができる(): void
     {
         Mail::fake();
 
@@ -71,7 +71,7 @@ class ReservationTest extends TestCase
     /**
      * 満席の場合は予約できないこと
      */
-    public function test_reservation_fails_when_capacity_is_full(): void
+    public function test_満席だと予約できない(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $shop = Shop::factory()->create(['default_stay_time' => 60]);
@@ -107,7 +107,7 @@ class ReservationTest extends TestCase
     /**
      * 必須項目不足でバリデーションエラーになる
      */
-    public function test_reservation_validation_required_fields(): void
+    public function test_必須項目が不足していると予約できない(): void
     {
         $user = User::factory()->create();
 
@@ -121,7 +121,7 @@ class ReservationTest extends TestCase
     /**
      * 過去の日付で予約できないこと
      */
-    public function test_reservation_validation_past_date(): void
+    public function test_過去の日付では予約できない(): void
     {
         $user = User::factory()->create();
         $shop = Shop::factory()->create();
@@ -140,7 +140,7 @@ class ReservationTest extends TestCase
     /**
      * 重複予約（同じ時間の予約）はバリデーションエラーになること
      */
-    public function test_reservation_validation_duplicate_time(): void
+    public function test_重複する時間では予約できない(): void
     {
         $user = User::factory()->create();
         $shop = Shop::factory()->create(['default_stay_time' => 60]);
@@ -183,7 +183,7 @@ class ReservationTest extends TestCase
     /**
      * ユーザーが予約を持ち、正しくリレーションが機能することをテスト
      */
-    public function test_user_can_have_reservations(): void
+    public function test_ユーザーは予約を持てる(): void
     {
         $user = User::factory()->create();
         $reservation = Reservation::factory()->create(['user_id' => $user->id]);
@@ -195,7 +195,7 @@ class ReservationTest extends TestCase
     /**
      * 予約が特定の店舗に紐付いていることをテスト
      */
-    public function test_reservation_belongs_to_shop(): void
+    public function test_予約は店舗に紐付く(): void
     {
         $shop = Shop::factory()->create();
         $reservation = Reservation::factory()->create(['shop_id' => $shop->id]);
@@ -207,7 +207,7 @@ class ReservationTest extends TestCase
     /**
      * 同じユーザーが同じ時間に予約しようとした際、DBレベルで制約がかかることをテスト
      */
-    public function test_duplicate_reservation_prevented_by_unique_constraint(): void
+    public function test_DBレベルで重複予約が防止される(): void
     {
         $user = User::factory()->create();
         $startTime = now()->addDay()->format('Y-m-d H:i:s');
@@ -230,7 +230,7 @@ class ReservationTest extends TestCase
     /**
      * 予約の物理削除が機能することをテスト
      */
-    public function test_reservation_can_be_deleted(): void
+    public function test_予約を物理削除できる(): void
     {
         $reservation = Reservation::factory()->create();
 

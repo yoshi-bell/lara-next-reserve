@@ -296,5 +296,44 @@
     *   全機能テスト（認証、店舗、予約、お気に入り、マイページ、リマインダー）のメソッド名を英語から日本語（例: `test_予約ができる`）へ変更。
     *   テスト実行結果 (`--testdox`) の可読性を高め、テストコード自体を「実行可能な仕様書」として機能するように改善。
 
-### 3. 最終状態の確認
-*   バックエンド (Feature Test) および フロントエンド (E2E Test) の全項目がパスし、システム全体の健全性が保証されている。
+---
+
+## 2026-01-30: Vitest と Storybook の導入（VRT準備）
+
+### 1. 完了したタスク
+
+#### コンポーネント指向開発基盤の整備
+*   **Vitest導入:** フロントエンドのユニットテストツールとして Vitest を導入。
+*   **Storybook導入:** UIコンポーネントカタログとして Storybook を導入し、Next.js + Tailwind CSS 環境での動作を確認。
+*   **Story作成:** `ShopCard`, `ReservationCard` の主要コンポーネントに対し、CSF 3.0形式のStory (`.stories.tsx`) を実装。
+*   **テスト統合:** `npm test` コマンドで Storybook の Story がテストケースとして実行されるよう `vitest.config.ts` を構成（Interaction Test基盤の確立）。
+
+### 2. 残課題
+*   **VRT (Visual Regression Testing):** コンポーネントの描画ロジックは検証できているが、教材にある「画像差分比較 (`@storybook/test-runner`)」は未実装。
+
+### 3. 次のステップ
+*   教材「chapter3.md」に従い、VRT環境を構築するか、または現在の構成で開発を完了とするかを判断する。
+
+---
+
+## 2026-01-30 (続き): VRT (Visual Regression Testing) の完全導入
+
+### 1. 完了したタスク
+
+#### VRT環境の構築
+*   **ツール導入:** `@storybook/test-runner` と `jest-image-snapshot` をインストールし、Storybook 上での画像差分検知環境を構築。
+*   **設定ファイルの実装:** `.storybook/test-runner.ts` (TypeScript) を作成し、`postVisit` フックにてスクリーンショット撮影と `toMatchImageSnapshot` による比較ロジックを実装。
+*   **型定義の解決:** 
+    *   TypeScript エラー（`expect` や `Matchers` の不一致）に対し、`@types/jest` の導入と `// @ts-ignore` による実用的な解決策を適用。
+    *   Storyファイル内の `@storybook/react` を `@storybook/nextjs` に置換し、推奨構成へ移行。
+
+#### 動作検証と学習
+*   **差分検知サイクル:**
+    1.  **基準作成:** `npm run test:vrt` で初期画像を保存。
+    2.  **破壊テスト:** コンポーネントのスタイルを意図的に変更。
+    3.  **検知:** テストが FAIL し、`__diff_output__` に差分画像が生成されることを確認。
+*   **コード理解:** Storybook におけるスプレッド構文（`...mockShop`）の役割（既存データの再利用と差分定義）を学習。
+
+### 2. プロジェクト完了
+これにて、フロントエンドの品質保証（E2E: Playwright, Unit/Interaction: Vitest, Visual: Storybook VRT）の主要なレイヤーがすべて出揃いました。
+プロジェクトの学習目標であった「モダンな開発フロー」と「品質保証プロセス」を網羅しました。

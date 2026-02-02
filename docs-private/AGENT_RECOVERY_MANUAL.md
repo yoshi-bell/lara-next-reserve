@@ -19,8 +19,8 @@
 以下のステップを順に実行し、各項目の [ ] にチェックを入れながら進めてください。
 
 ### ステップ 1: プロジェクトの全体像把握 (High-level Analysis)
-*   [ ] **開発ルールの分析 (`DEVELOPMENT_PLAN.md`):**
-    *   `docs-private/DEVELOPMENT_PLAN.md` を読み込み、プロジェクトの不変の原則を特定する。
+*   [ ] **開発ルールの分析 (`RULES_AND_ARCHITECTURE.md`):**
+    *   `docs-private/RULES_AND_ARCHITECTURE.md` を読み込み、プロジェクトの不変の原則を特定する。
 *   [ ] **直近のワークフロー確認 (`WORKFLOW.md`):**
     *   `docs-private/WORKFLOW.md` の「開発ルール」を最優先で遵守すること。
 *   [ ] **直近の作業ログ確認 (`DEV_LOG.md`):**

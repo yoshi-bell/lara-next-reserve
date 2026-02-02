@@ -6,6 +6,8 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Resources\ShopResource;
+
 class ShopController extends Controller
 {
     /**
@@ -30,7 +32,7 @@ class ShopController extends Controller
             })
             ->get();
 
-        return response()->json($shops);
+        return ShopResource::collection($shops);
     }
 
     /**
@@ -45,6 +47,6 @@ class ShopController extends Controller
                 $query->where('user_id', $userId);
             }]);
 
-        return response()->json($shop);
+        return new ShopResource($shop);
     }
 }

@@ -1,15 +1,7 @@
 // src/hooks/useMyFavorites.ts
 import useSWR from 'swr';
 import axios from '@/lib/axios';
-
-interface Shop {
-    id: number;
-    name: string;
-    image_url: string;
-    area: { name: string };
-    genre: { name: string };
-    favorites_exists: boolean;
-}
+import { Shop } from '@/types';
 
 const fetcher = async (url: string) => {
     const res = await axios.get(url);

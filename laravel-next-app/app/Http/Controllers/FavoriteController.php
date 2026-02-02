@@ -7,6 +7,8 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Resources\ShopResource;
+
 class FavoriteController extends Controller
 {
     /**
@@ -25,7 +27,7 @@ class FavoriteController extends Controller
         }])
         ->get();
 
-        return response()->json($shops);
+        return ShopResource::collection($shops);
     }
 
     /**

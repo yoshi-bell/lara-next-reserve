@@ -13,9 +13,16 @@ type Story = StoryObj<typeof ShopCard>;
 const mockShop = {
     id: 1,
     name: "仙人",
+    area_id: 1, // Added
+    genre_id: 1, // Added
+    description: "テスト店舗です。", // Added
     image_url: "/images/shops/sushi.jpg",
-    area: { name: "東京都" },
-    genre: { name: "寿司" },
+    start_time: "17:00:00", // Added
+    end_time: "23:00:00", // Added
+    default_capacity: 10, // Added
+    default_stay_time: 120, // Added
+    area: { id: 1, name: "東京都" }, // id added
+    genre: { id: 1, name: "寿司" }, // id added
     favorites_exists: false,
 };
 

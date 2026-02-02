@@ -1,26 +1,7 @@
 // src/hooks/useShopDetail.ts
 import useSWR from 'swr';
 import axios from '@/lib/axios';
-
-interface Area {
-    id: number;
-    name: string;
-}
-
-interface Genre {
-    id: number;
-    name: string;
-}
-
-interface Shop {
-    id: number;
-    name: string;
-    description: string;
-    image_url: string;
-    area: Area;
-    genre: Genre;
-    favorites_exists: boolean;
-}
+import { Shop } from '@/types';
 
 const fetcher = async (url: string) => {
     const res = await axios.get(url);

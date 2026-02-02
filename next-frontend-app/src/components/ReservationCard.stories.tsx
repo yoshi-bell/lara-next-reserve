@@ -12,6 +12,7 @@ type Story = StoryObj<typeof ReservationCard>;
 
 const mockReservation = {
     id: 1,
+    user_id: 1, // Added
     shop_id: 1,
     start_at: "2026-02-18T19:00:00Z",
     number: 2,
@@ -19,7 +20,14 @@ const mockReservation = {
     shop: {
         id: 1,
         name: "仙人",
+        area_id: 1, // Added
+        genre_id: 1, // Added
+        description: "テスト店舗です。", // Added
         image_url: "/images/shops/sushi.jpg",
+        start_time: "17:00:00", // Added
+        end_time: "23:00:00", // Added
+        default_capacity: 10, // Added
+        default_stay_time: 120, // Added
         area: { id: 1, name: "東京都" },
         genre: { id: 1, name: "寿司" },
     },

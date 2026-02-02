@@ -3,16 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useFavorite } from "@/hooks/useFavorite";
-
-// 型定義は共通化すべきですが、一旦ここで定義（またはtypesディレクトリからインポート）
-interface Shop {
-    id: number;
-    name: string;
-    image_url: string;
-    area: { name: string };
-    genre: { name: string };
-    favorites_exists: boolean;
-}
+import { Shop } from "@/types";
 
 interface ShopCardProps {
     shop: Shop;

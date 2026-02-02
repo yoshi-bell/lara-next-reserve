@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\Services\ReservationService;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class ReservationController extends Controller
 
         $reservations = $query->get();
 
-        return response()->json($reservations);
+        return ReservationResource::collection($reservations);
     }
 
     /**
@@ -58,7 +59,7 @@ class ReservationController extends Controller
 
             return response()->json([
                 'message' => '予約が完了しました。',
-                'data' => $reservation
+                'data' => new ReservationResource($reservation)
             ], 201);
 
         } catch (Exception $e) {

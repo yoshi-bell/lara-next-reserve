@@ -102,7 +102,7 @@ class ReservationService
                 $slot->save();
             }
 
-            // 4. 予約を論理削除
+            // 4. 予約を物理削除
             $reservation->delete();
         });
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Reservation } from "@/hooks/useMyReservations";
+import { Reservation } from "@/types";
 import Link from "next/link";
 
 interface ReservationCardProps {

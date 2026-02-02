@@ -11,13 +11,13 @@ const fetcher = async (url: string) => {
 
 export function useShopDetail(id: string | number | undefined) {
     // SWRを使って /api/shops/{id} からデータをフェッチ
-    const { data, error, isLoading } = useSWR<Shop>(
+    const { data, error, isLoading } = useSWR<{ data: Shop }>(
         id ? ENDPOINTS.SHOPS.DETAIL(id) : null,
         fetcher
     );
 
     return {
-        shop: data,
+        shop: data?.data,
         isLoading,
         isError: error,
     };

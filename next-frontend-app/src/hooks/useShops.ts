@@ -21,12 +21,12 @@ export function useShops(params?: { areaId?: string; genreId?: string; name?: st
 
     // SWRを使ってデータをフェッチ。キーにURLを含めることで、パラメータ変更時に自動再取得される。
     // keepPreviousData: true により、再フェッチ中も以前のデータを表示し続け、UXを向上させる。
-    const { data, error, isLoading, mutate } = useSWR<Shop[]>(url, fetcher, {
+    const { data, error, isLoading, mutate } = useSWR<{ data: Shop[] }>(url, fetcher, {
         keepPreviousData: true,
     });
 
     return {
-        shops: data,
+        shops: data?.data,
         isLoading,
         isError: error,
         mutate,

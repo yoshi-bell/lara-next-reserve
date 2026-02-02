@@ -12,10 +12,10 @@ const fetcher = async (url: string) => {
 export function useMyReservations(type: 'future' | 'history' = 'future') {
     const baseUrl = ENDPOINTS.RESERVATIONS.LIST;
     const url = type === 'history' ? `${baseUrl}?type=history` : baseUrl;
-    const { data, error, isLoading, mutate } = useSWR<Reservation[]>(url, fetcher);
+    const { data, error, isLoading, mutate } = useSWR<{ data: Reservation[] }>(url, fetcher);
 
     return {
-        reservations: data,
+        reservations: data?.data,
         isLoading,
         isError: error,
         mutate,

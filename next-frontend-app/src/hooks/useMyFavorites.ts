@@ -10,10 +10,10 @@ const fetcher = async (url: string) => {
 };
 
 export function useMyFavorites() {
-    const { data, error, isLoading, mutate } = useSWR<Shop[]>(ENDPOINTS.FAVORITES.LIST, fetcher);
+    const { data, error, isLoading, mutate } = useSWR<{ data: Shop[] }>(ENDPOINTS.FAVORITES.LIST, fetcher);
 
     return {
-        favoriteShops: data,
+        favoriteShops: data?.data,
         isLoading,
         isError: error,
         mutate,

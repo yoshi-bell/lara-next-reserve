@@ -410,3 +410,8 @@
 ### 2. 技術的判断
 *   **ドキュメント分割:** AIエージェントが常に読み込むファイル（憲法）を軽量に保つことで、トークンの節約と応答精度の維持を図った。
 *   **テストの一本化:** 競合が起きやすいテストを明示的に直列化（serial）したもののみ残すことで、CI/CDの安定性を向上させた。
+
+#### API Response Structureの修正（不整合対応）
+*   **不具合:** `JsonResource::withoutWrapping` の仕様（コレクション時はラップされる）とフロントエンドの期待値（配列直）の不一致が発生。
+*   **対応 (Backend):** `withoutWrapping` を削除し、Laravel標準の `{"data": ...}` ラップに統一。これに伴い `ShopTest` のアサーションを修正。
+*   **対応 (Frontend):** 全Hooks (`useShops`, `useMyReservations` 等) を修正し、`data.data` プロパティから配列/オブジェクトを取り出すように変更。

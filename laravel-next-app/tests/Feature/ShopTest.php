@@ -22,7 +22,7 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'data');
     }
 
     /**
@@ -41,7 +41,7 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?area_id=' . $area1->id);
 
         $response->assertStatus(200)
-            ->assertJsonCount(1);
+            ->assertJsonCount(1, 'data');
     }
 
     /**
@@ -59,7 +59,7 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?genre_id=' . $genre1->id);
 
         $response->assertStatus(200)
-            ->assertJsonCount(1);
+            ->assertJsonCount(1, 'data');
     }
 
     /**
@@ -75,7 +75,7 @@ class ShopTest extends TestCase
         $response = $this->getJson('/api/shops?name=Sushi');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2); // Tarou と Hanako がヒットするはず
+            ->assertJsonCount(2, 'data'); // Tarou と Hanako がヒットするはず
     }
 
     /**
@@ -92,9 +92,11 @@ class ShopTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'id' => $shop->id,
-                'name' => 'My Shop',
-                'description' => 'Delicious food',
+                'data' => [
+                    'id' => $shop->id,
+                    'name' => 'My Shop',
+                    'description' => 'Delicious food',
+                ]
             ]);
     }
 }

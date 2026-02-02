@@ -2,6 +2,7 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios';
 import { Shop } from '@/types';
+import { ENDPOINTS } from '@/services/endpoints';
 
 const fetcher = async (url: string) => {
     const res = await axios.get(url);
@@ -11,7 +12,7 @@ const fetcher = async (url: string) => {
 export function useShopDetail(id: string | number | undefined) {
     // SWRを使って /api/shops/{id} からデータをフェッチ
     const { data, error, isLoading } = useSWR<Shop>(
-        id ? `/api/shops/${id}` : null,
+        id ? ENDPOINTS.SHOPS.DETAIL(id) : null,
         fetcher
     );
 

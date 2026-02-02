@@ -2,6 +2,7 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios';
 import { Shop } from '@/types';
+import { ENDPOINTS } from '@/services/endpoints';
 
 const fetcher = async (url: string) => {
     const res = await axios.get(url);
@@ -9,7 +10,7 @@ const fetcher = async (url: string) => {
 };
 
 export function useMyFavorites() {
-    const { data, error, isLoading, mutate } = useSWR<Shop[]>('/api/favorites', fetcher);
+    const { data, error, isLoading, mutate } = useSWR<Shop[]>(ENDPOINTS.FAVORITES.LIST, fetcher);
 
     return {
         favoriteShops: data,

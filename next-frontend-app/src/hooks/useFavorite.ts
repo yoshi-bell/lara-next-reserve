@@ -2,6 +2,7 @@
 import useSWRMutation from "swr/mutation";
 import axios from "@/lib/axios";
 import { useSWRConfig } from "swr";
+import { ENDPOINTS } from "@/services/endpoints";
 
 async function favoriteFetcher(url: string) {
     return await axios.post(url);
@@ -25,28 +26,28 @@ export function useFavorite(shopId: number) {
 
     const onSuccess = () => {
         // 詳細ページのキャッシュ更新
-        mutate(`/api/shops/${shopId}`);
+        mutate(ENDPOINTS.SHOPS.DETAIL(shopId));
 
         // マイページのお気に入り一覧キャッシュ更新
-        mutate("/api/favorites");
+        mutate(ENDPOINTS.FAVORITES.LIST);
 
         // 一覧ページのキャッシュ更新
         // 検索条件付きのキーも含めて更新するため、matcher関数を使用
         mutate(
-            (key) => typeof key === "string" && key.startsWith("/api/shops"),
+            (key) => typeof key === "string" && key.startsWith(ENDPOINTS.SHOPS.LIST),
             undefined,
             { revalidate: true },
         );
     };
 
     const { trigger: addFavorite, isMutating: isAdding } = useSWRMutation(
-        `/api/shops/${shopId}/favorite`,
+        ENDPOINTS.SHOPS.FAVORITE(shopId),
         favoriteFetcher,
         { onSuccess },
     );
 
     const { trigger: removeFavorite, isMutating: isRemoving } = useSWRMutation(
-        `/api/shops/${shopId}/favorite`,
+        ENDPOINTS.SHOPS.FAVORITE(shopId),
         unfavoriteFetcher,
         { onSuccess },
     );

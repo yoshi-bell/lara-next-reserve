@@ -11,9 +11,31 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class ReservationService
 {
+    /**
+     * ログインユーザーの予約一覧を取得する
+     */
+    public function getMyReservations(User $user, string $type = 'future'): Collection
+    {
+        $query = Reservation::where('user_id', $user->id)
+            ->with(['shop.area', 'shop.genre']);
+
+        if ($type === 'history') {
+            // 過去の予約（降順）
+            $query->where('start_at', '<', now())
+                  ->orderBy('start_at', 'desc');
+        } else {
+            // 未来の予約（昇順：デフォルト）
+            $query->where('start_at', '>=', now())
+                  ->orderBy('start_at', 'asc');
+        }
+
+        return $query->get();
+    }
+
     /**
      * 予約を作成する
      * 

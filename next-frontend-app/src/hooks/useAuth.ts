@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import axios from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios'; // 追加
+import { ENDPOINTS } from '@/services/endpoints';
 
 interface User {
     id: number;
@@ -27,12 +28,12 @@ const fetcher = async (url: string) => {
 export function useAuth() {
     const router = useRouter();
     
-    const { data: user, error, isLoading, mutate } = useSWR<User | null>('/api/user', fetcher, {
+    const { data: user, error, isLoading, mutate } = useSWR<User | null>(ENDPOINTS.AUTH.USER, fetcher, {
         shouldRetryOnError: false, // 401エラーなどでリトライしないようにする
     });
 
     const logout = async () => {
-        await axios.post('/api/logout');
+        await axios.post(ENDPOINTS.AUTH.LOGOUT);
         mutate(null); // キャッシュをクリア
         router.push('/login');
     };

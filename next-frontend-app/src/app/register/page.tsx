@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成したaxiosをインポート
 import { isAxiosError } from "axios"; // isAxiosErrorをインポート
 import Header from "@/components/Header"; // 追加
+import { ENDPOINTS } from "@/services/endpoints";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -23,10 +24,10 @@ export default function RegisterPage() {
 
         try {
             // 1. CSRFクッキーを取得 (GETメソッド)
-            await axios.get('/sanctum/csrf-cookie');
+            await axios.get(ENDPOINTS.AUTH.CSRF);
 
             // 2. 登録リクエスト送信 (POSTメソッド)
-            await axios.post('/api/register', {
+            await axios.post(ENDPOINTS.AUTH.REGISTER, {
                 name,
                 email,
                 password,

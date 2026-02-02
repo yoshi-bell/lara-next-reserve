@@ -3,31 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Favorite;
+
 use App\Models\Shop;
+
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Resources\ShopResource;
 
+use App\Services\ShopService;
+
+
+
 class FavoriteController extends Controller
+
 {
-    /**
-     * お気に入り店舗一覧を取得
-     */
-    public function index()
+
+    protected $shopService;
+
+
+
+    public function __construct(ShopService $shopService)
+
     {
-        $userId = Auth::id();
-        
-        $shops = Shop::whereHas('favorites', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })
-        ->with(['area', 'genre'])
-        ->withExists(['favorites' => function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        }])
-        ->get();
+
+        $this->shopService = $shopService;
+
+    }
+
+
+
+    /**
+
+     * お気に入り店舗一覧を取得
+
+     */
+
+    public function index()
+
+    {
+
+        $shops = $this->shopService->getFavoriteShops(Auth::id());
+
+
 
         return ShopResource::collection($shops);
+
     }
 
     /**

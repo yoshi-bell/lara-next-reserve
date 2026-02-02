@@ -3,50 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shop;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use App\Http\Resources\ShopResource;
 
-class ShopController extends Controller
-{
-    /**
-     * 店舗一覧を取得（検索フィルタ対応）
-     */
-    public function index(Request $request)
-    {
-        $userId = Auth::id();
+use App\Services\ShopService;
 
-        $shops = Shop::with(['area', 'genre'])
-            ->withExists(['favorites' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])
-            ->when($request->area_id, function ($query, $areaId) {
-                $query->where('area_id', $areaId);
-            })
-            ->when($request->genre_id, function ($query, $genreId) {
-                $query->where('genre_id', $genreId);
-            })
-            ->when($request->name, function ($query, $name) {
-                $query->where('name', 'like', '%' . $name . '%');
-            })
-            ->get();
+
+
+class ShopController extends Controller
+
+{
+
+    protected $shopService;
+
+
+
+    public function __construct(ShopService $shopService)
+
+    {
+
+        $this->shopService = $shopService;
+
+    }
+
+
+
+    /**
+
+     * 店舗一覧を取得（検索フィルタ対応）
+
+     */
+
+    public function index(Request $request)
+
+    {
+
+        $shops = $this->shopService->getFilteredShops($request->all());
+
+
 
         return ShopResource::collection($shops);
+
     }
+
+
 
     /**
-     * 店舗詳細を取得
-     */
-    public function show(Shop $shop)
-    {
-        $userId = Auth::id();
 
-        $shop->load(['area', 'genre'])
-            ->loadExists(['favorites' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }]);
+     * 店舗詳細を取得
+
+     */
+
+    public function show(Shop $shop)
+
+    {
+
+        $shop = $this->shopService->getShopDetail($shop);
+
+
 
         return new ShopResource($shop);
+
     }
+
 }

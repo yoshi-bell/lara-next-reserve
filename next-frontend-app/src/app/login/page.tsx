@@ -6,6 +6,7 @@ import axios from "@/lib/axios"; // 作成済みの設定済みaxiosを使う
 import { isAxiosError } from "axios"; // 追加
 import Header from "@/components/Header"; // Headerをインポート
 import { useAuth } from "@/hooks/useAuth"; // useAuthをインポート
+import { ENDPOINTS } from "@/services/endpoints";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -20,10 +21,10 @@ export default function LoginPage() {
 
         try {
             // 1. CSRFクッキー取得
-            await axios.get('/sanctum/csrf-cookie');
+            await axios.get(ENDPOINTS.AUTH.CSRF);
 
             // 2. ログインリクエスト (axiosを使用)
-            await axios.post('/api/login', {
+            await axios.post(ENDPOINTS.AUTH.LOGIN, {
                 email,
                 password,
             });

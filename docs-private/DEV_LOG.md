@@ -373,3 +373,17 @@
 ### 2. 技術的判断
 *   **Resourceのラップ解除:** API設計としてはラップする方が拡張性が高いが、既存フロントエンドへの影響範囲を最小限にするため、今回はラップ解除を選択。将来的なラップ導入は別途検討。
 *   **Storybookの型厳密化:** これまで曖昧だったモックデータが、共通型定義により「本番データと同等」であることが強制されるようになり、コンポーネントテストの信頼性が向上。
+
+#### [Backend] サービス層へのロジック完全移行
+*   **Service拡張:** `ShopService` を新設し、検索ロジックやお気に入り取得ロジックを集約。`ReservationService` に参照系メソッド（予約一覧取得）を追加。
+*   **Controller軽量化:** `ShopController`, `ReservationController`, `FavoriteController` からクエリビルダ操作を排除し、サービス呼び出しのみに責務を限定。
+
+#### [Frontend] APIクライアントの整備
+*   **Endpoints集約:** `src/services/endpoints.ts` を作成し、分散していたAPIパス文字列を一元管理。
+*   **Hooks改修:** 各Hooks (`useShops` 等) や認証ページでハードコードされていたURLを `ENDPOINTS` 定数に置換。
+
+### 3. 総括
+本日のリファクタリングにより、フロントエンド・バックエンド双方の「窓口（Interface）」と「ロジック（Implementation）」が明確に分離され、変更に強く、テスト容易性の高いアーキテクチャへと進化しました。
+- **Type Safety:** 共通型定義によるデータ整合性の保証。
+- **Clean Architecture:** Service層とAPI Resourceによる責務の分離。
+- **Maintainability:** API Endpointsの一元管理による保守性の向上。

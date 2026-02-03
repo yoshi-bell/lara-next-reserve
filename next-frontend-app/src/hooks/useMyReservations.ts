@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import axios from '@/lib/axios';
 import { Reservation } from '@/types';
 import { ENDPOINTS } from '@/services/endpoints';
+import { buildQueryParams } from '@/lib/utils';
 
 const fetcher = async (url: string) => {
     const res = await axios.get(url);
@@ -10,8 +11,10 @@ const fetcher = async (url: string) => {
 };
 
 export function useMyReservations(type: 'future' | 'history' = 'future') {
-    const baseUrl = ENDPOINTS.RESERVATIONS.LIST;
-    const url = type === 'history' ? `${baseUrl}?type=history` : baseUrl;
+    const url = `${ENDPOINTS.RESERVATIONS.LIST}${buildQueryParams({
+        type: type === 'history' ? 'history' : undefined,
+    })}`;
+
     const { data, error, isLoading, mutate } = useSWR<{ data: Reservation[] }>(url, fetcher);
 
     return {

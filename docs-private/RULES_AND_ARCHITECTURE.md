@@ -61,5 +61,6 @@
 
 *   **`WORKFLOW.md`:** 開発の手順書・チェックリスト（作業時はこれを常に見る）。
 *   **`CODING_GUIDELINES.md`:** 詳細なコーディング規約・コメント規則・実装ガイドライン。
+*   **`REFACTORING_PROPOSAL.md`:** 将来的な改善項目やリファクタリングのロードマップ。
 *   **`DEV_LOG.md`:** 開発の航海日誌・変更履歴。
 *   **`AGENT_RECOVERY_MANUAL.md`:** エージェントの初期化・復旧マニュアル。

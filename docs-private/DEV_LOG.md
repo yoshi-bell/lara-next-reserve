@@ -456,3 +456,8 @@
     *   `src/hooks/useData.ts` を作成し、SWR呼び出しとレスポンスのアンラップ処理 (`data?.data`) を集約。
 *   **適用:** 全てのデータ取得Hooks (`useShops`, `useMyReservations` 等) をリファクタリングし、重複コードを削減。
 *   **検証:** 型チェック (`tsc`) とE2Eテスト（検索、お気に入り）がパスすることを確認。`reservation` テストの失敗は日付依存の可能性が高いため、別途対応とする。
+
+#### [Frontend] テストコードのタイムゾーン依存バグの修正
+*   **不具合:** `tests/reservation.spec.ts` において、`toISOString()` (UTC) を使用して日付を生成していたため、実行時間帯（JSTの朝など）によってDB内のデータと画面表示の日付が1日ずれる現象が発生していた。
+*   **対応:** `toISOString()` を廃止し、実行環境のローカル時間（`getFullYear`, `getMonth`, `getDate`）に基づいた日付生成ロジックに修正。
+*   **検証:** DBリセット後の `reservation.spec.ts` 単体実行にて、正常に予約作成・確認・キャンセルができることを確認。

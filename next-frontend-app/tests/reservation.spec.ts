@@ -14,7 +14,13 @@ test("予約の作成とキャンセルができること", async ({ page }) => 
     // ReservationSeederは2週間先までしか予約を作らないため、20日後は空いているはず
     const targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + 20);
-    const dateString = targetDate.toISOString().split("T")[0];
+    
+    // ISOString (UTC) ではなく、ローカルの YYYY-MM-DD を手動で作成
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     // 画面表示用（ja-JPの挙動に合わせてゼロ埋めなしの YYYY/M/D 形式を作成）
     const displayDate = `${targetDate.getFullYear()}/${targetDate.getMonth() + 1}/${targetDate.getDate()}`;
 

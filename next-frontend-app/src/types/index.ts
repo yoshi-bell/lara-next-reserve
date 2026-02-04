@@ -1,5 +1,10 @@
 // 共通型定義ファイル
 
+// API Response Wrapper (Laravel JsonResource default)
+export interface ApiResponse<T> {
+    data: T;
+}
+
 // Area
 export interface Area {
     id: number;

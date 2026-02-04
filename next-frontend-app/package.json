@@ -11,7 +11,8 @@
     "test:vrt": "test-storybook",
     "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "codegen": "openapi-typescript ../laravel-next-app/public/docs/openapi.yaml -o src/types/schema.d.ts"
   },
   "dependencies": {
     "axios": "^1.13.2",
@@ -49,6 +50,7 @@
     "eslint-plugin-storybook": "^10.2.1",
     "jest-image-snapshot": "^6.5.1",
     "jsdom": "^27.4.0",
+    "openapi-typescript": "^7.10.1",
     "playwright": "^1.58.0",
     "storybook": "^10.2.1",
     "tailwindcss": "^4",

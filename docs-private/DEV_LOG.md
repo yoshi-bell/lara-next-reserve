@@ -461,3 +461,17 @@
 *   **不具合:** `tests/reservation.spec.ts` において、`toISOString()` (UTC) を使用して日付を生成していたため、実行時間帯（JSTの朝など）によってDB内のデータと画面表示の日付が1日ずれる現象が発生していた。
 *   **対応:** `toISOString()` を廃止し、実行環境のローカル時間（`getFullYear`, `getMonth`, `getDate`）に基づいた日付生成ロジックに修正。
 *   **検証:** DBリセット後の `reservation.spec.ts` 単体実行にて、正常に予約作成・確認・キャンセルができることを確認。
+
+## 2026-02-04 (後半): リファクタリング フェーズ2（DX革新）
+
+### 1. 完了したタスク
+
+#### [Fullstack] OpenAPIによる型定義の自動同期システム (Core Strategy)
+*   **実装内容:**
+    *   **Backend:** `knuckleswtf/scribe` を導入し、`openapi` モードを有効化。コードベースから `public/docs/openapi.yaml` を自動生成するフローを確立。
+    *   **Frontend:** `openapi-typescript` を導入し、`npm run codegen` コマンドを作成。バックエンドのYAMLから `src/types/schema.d.ts` を自動生成するパイプラインを構築。
+*   **成果:** バックエンドの実装変更（Resource/Request）をフロントエンドの型定義にコマンド一つで同期可能となり、手動管理による型不整合リスクを排除。
+
+### 2. 現在のステータス
+*   **フェーズ:** 戦略的リファクタリング・ロードマップ フェーズ2 完了
+*   **次回のタスク:** フェーズ3「品質強化（Zod導入、Any撲滅）」の実装。

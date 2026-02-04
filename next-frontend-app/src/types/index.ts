@@ -30,17 +30,17 @@ export interface Shop {
     description: string;
     image_url: string;
     start_time: string; // HH:mm:ss
-    end_time: string;   // HH:mm:ss
+    end_time: string; // HH:mm:ss
     default_capacity: number;
     default_stay_time: number;
-    
+
     // Relations
-    area: Area;
-    genre: Genre;
-    
+    area?: Area;
+    genre?: Genre;
+
     // User specific (appended via attribute or withCount/exists)
     favorites_exists?: boolean;
-    
+
     created_at?: string;
     updated_at?: string;
 }
@@ -53,10 +53,10 @@ export interface Reservation {
     start_at: string; // DateTime string
     number: number;
     usage_time: number;
-    
+
     // Relations
-    shop: Shop;
-    
+    shop?: Shop;
+
     created_at?: string;
     updated_at?: string;
     deleted_at?: string | null; // 論理削除対応（履歴表示用）

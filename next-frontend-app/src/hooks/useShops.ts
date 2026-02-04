@@ -3,6 +3,8 @@ import { Shop } from '@/types';
 import { ENDPOINTS } from '@/services/endpoints';
 import { buildQueryParams } from '@/lib/utils';
 import { useData } from './useData';
+import { shopSchema } from '@/lib/schemas';
+import { z } from 'zod';
 
 export function useShops(params?: { areaId?: string; genreId?: string; name?: string }) {
     // 汎用ユーティリティを使ってクエリパラメータ付きのURLを構築
@@ -12,13 +14,14 @@ export function useShops(params?: { areaId?: string; genreId?: string; name?: st
         name: params?.name,
     })}`;
 
-    // useDataを使ってデータをフェッチ (自動アンラップ)
-    const { data, error, isLoading, mutate } = useData<Shop[]>(url, {
+    // useDataを使ってデータをフェッチ (自動アンラップ + Zodバリデーション)
+    // 第2引数にスキーマ、第3引数にオプションを渡す
+    const { data, error, isLoading, mutate } = useData<Shop[]>(url, z.array(shopSchema), {
         keepPreviousData: true,
     });
 
     return {
-        shops: data, // 既にアンラップされている
+        shops: data,
         isLoading,
         isError: error,
         mutate,

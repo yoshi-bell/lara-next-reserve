@@ -1,12 +1,12 @@
-# Analysis Task: Generics & Logic Extraction
+# TypeScript Refactoring Candidates
 
-- [ ] Analyze Type Definitions
-    - [ ] Check `src/types/index.ts` for repetitive response structures.
-    - [ ] Propose `ApiResponse<T>` or similar generic interfaces.
-- [ ] Analyze Custom Hooks
-    - [ ] Check `useShops`, `useMyReservations`, etc. for repeated fetcher logic.
-    - [ ] Identify opportunity for a generic `useApi<T>` hook.
-- [ ] Analyze Utility Logic
-    - [ ] Check for repeated `URLSearchParams` construction or error handling.
-- [ ] Report Findings
-    - [ ] Summarize reachable improvements without implementing them.
+- [ ] Investigate Error Handling
+    - [ ] Check if `unknown` is used in catch blocks instead of `any`.
+    - [ ] Propose `isApiError` type guard.
+- [ ] Investigate Component Props
+    - [ ] Check if `ComponentProps` or `Pick/Omit` are used.
+    - [ ] Propose stricter component interfaces.
+- [ ] Investigate State Management
+    - [ ] Check usage of Discriminated Unions for loading/error states.
+- [ ] Prepare Proposal
+    - [ ] Summarize findings and impact on skill score.

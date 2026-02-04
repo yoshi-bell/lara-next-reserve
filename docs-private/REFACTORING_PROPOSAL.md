@@ -5,50 +5,43 @@
 
 ---
 
-## 🚀 フェーズ 1: 基盤整理 (Quick Win)
-「動くコード」を「綺麗なコード」へ整理し、次の自動化ステップの受け皿を作ります。
+## 🚀 フェーズ 1: 基盤整理 (完了済み)
+*   **[Frontend] URLクエリパラメータ構築の共通化:** `buildQueryParams` 作成。
+*   **[Frontend] SWRデータフェッチ処理の汎用化:** `useData<T>` フック作成。
 
-### 1. [Frontend] URLクエリパラメータ構築の共通化 (buildQueryParams)
-*   **内容:** `URLSearchParams` を手動構築している各Hooksからロジックを抽出し、汎用ユーティリティ化する。
-*   **効果:** 検索機能のコードが劇的にスッキリし、可読性が向上する。
+## 🎯 フェーズ 2: 開発者体験 (DX) の革新 (完了済み)
+*   **[Fullstack] OpenAPIによる型定義の自動同期システム:** Scribe + openapi-typescript 導入。
 
-### 2. [Frontend] SWRデータフェッチ処理の汎用化と型定義の標準化
-*   **内容:** `ApiResponse<T>` 型の導入と、ジェネリクスを用いた汎用フック `useData<T>` の作成。
-*   **効果:** 各Hooksでの重複コード（fetcher, .dataの抽出）を排除し、型安全なデータフェッチを標準化する。
-
----
-
-## 🎯 フェーズ 2: 開発者体験 (DX) の革新 (Core Strategy)
-本プロジェクトの技術的アピールにおける最大の武器（ドキュメント駆動）を構築します。
-
-### 3. [Fullstack] OpenAPIによる型定義の自動同期システム
-*   **内容:**
-    *   **Backend:** `Scribe` で OpenAPI 仕様書 (`openapi.yaml`) を自動生成。
-    *   **Frontend:** `openapi-typescript` で仕様書から型定義を自動生成。
-*   **効果:** バックエンドの変更がフロントエンドの型に即座に反映される「型安全な開発パイプライン」を実現。**就職活動における最強のアピールポイント。**
+## 🛡️ フェーズ 3: 品質強化 (完了済み)
+*   **[Frontend] Zodによるバリデーション:** スキーマ定義とランタイム検証。
+*   **[Frontend] テストコードの any 型撲滅:** モックの型安全性向上。
 
 ---
 
-## 🛡️ フェーズ 3: 品質強化 (Quality Assurance)
-自動生成された型を使い、アプリケーションの堅牢性を極限まで高めます。
+## 💎 フェーズ 3.5: 型安全性の深化 (Advanced TypeScript)
+TypeScriptの高度な機能（型ガード、共用体、ユーティリティ型）を活用し、コンパイルレベルでの安全性と設計品質をさらに高めます。
 
-### 4. [Frontend] Zodによるバリデーションと型定義の強化
-*   **内容:** APIレスポンスや URLパラメータ (`searchParams`) を Zod スキーマで検証。
-*   **効果:** 外部からの不正なデータによる実行時エラーを完全に防止。Next.js 15 の非同期パラメータ仕様にも適切に対応。
+### 6. カスタム型ガード (User-Defined Type Guards) の導入
+*   **内容:** `isApiError(error): error is ApiError` のような型ガード関数を作成し、`try-catch` ブロック内での `any` や `as` キャストを排除する。
+*   **効果:** エラーハンドリングの型安全性が保証され、安全なプロパティアクセスが可能になる。
 
-### 5. [Frontend] テストコードの any 型撲滅
-*   **内容:** ユニットテスト内の `as any` を排除し、正しい型（`vi.Mock`等）を適用。
-*   **効果:** テストコード自体の信頼性を高め、リファクタリング時の影響範囲を正確に検知可能にする。
+### 7. Utility Types (Pick, Omit, Partial) の積極利用
+*   **内容:** `ShopCardProps` などのコンポーネントProps定義において、`interface` を再定義するのではなく、`Pick<Shop, 'id' | 'name'>` 等を用いて元の型から派生させる。
+*   **効果:** 大元の型（OpenAPI生成型）が変更された際の影響範囲を最小化し、DRY（Don't Repeat Yourself）原則を徹底する。
+
+### 8. Discriminated Unions（判別可能な共用体）による状態管理
+*   **内容:** `useData` などの戻り値を、`{ isLoading: true, data: undefined } | { isLoading: false, data: T }` のように排他な状態として定義し直す。
+*   **効果:** 「ローディング中なのにデータを使おうとする」といった論理的矛盾を、コンパイルエラーとして検知可能にする。
 
 ---
 
 ## 🛠️ フェーズ 4: 継続的改善 (Maintenance)
 優先度は低いが、長期的な保守性のために実施を検討する項目です。
 
-### 6. [Frontend] フォーム実装の刷新 (React Hook Form)
+### 9. [Frontend] フォーム実装の刷新 (React Hook Form)
 *   **内容:** `useState` 管理のフォームを `react-hook-form` + `zod` へ移行。
 *   **効果:** 複雑なフォームバリデーションの管理を簡潔かつ宣言的にする。
 
-### 7. [Frontend] TypeScript設定のさらなる厳格化
+### 10. [Frontend] TypeScript設定のさらなる厳格化
 *   **内容:** `noUnusedLocals` 等のオプションを `tsconfig.json` に追加。
 *   **効果:** 未使用コードの混入を自動で防ぎ、コードベースを常に清潔に保つ。

@@ -91,3 +91,42 @@ public function getFilteredShops(array $filters): Collection
 *   `Http/Resources/`: APIレスポンス整形。
 *   `Services/`: ビジネスロジック、クエリ構築。
 *   `Models/`: Eloquentモデル、リレーション定義。
+
+---
+
+## 🏗️ 標準アーキテクチャ・パターン (Standard Patterns)
+次回プロジェクト開発時にも適用すべき、推奨される実装パターン。
+
+### 1. 型定義の自動同期 (Type Synchronization)
+*   **ツール:** Backend: `knuckleswtf/scribe`, Frontend: `openapi-typescript`
+*   **フロー:**
+    1.  Laravelコードから `openapi.yaml` を自動生成。
+    2.  `openapi.yaml` から TypeScript型定義 (`schema.d.ts`) を自動生成。
+    3.  `schema.d.ts` を `src/types/index.ts` 等でラップして使用する。
+
+### 2. データフェッチの抽象化 (Generic Data Fetching)
+*   **パターン:** `useData<T>` (SWR Wrapper)
+*   **目的:** `fetcher` 定義、レスポンスのアンラップ (`data.data`)、ローディング状態の管理を一元化する。
+*   **実装:** `src/hooks/useData.ts` を作成し、全てのデータ取得Hooksはこれを利用する。
+
+### 3. ランタイムバリデーション (Runtime Validation)
+*   **ツール:** `zod`
+*   **目的:** APIレスポンスやURLパラメータが、期待する型（OpenAPI定義）と一致しているか実行時に検証する。
+*   **実装:**
+    *   OpenAPI型定義に準拠した Zod スキーマを `src/lib/schemas.ts` に定義。
+    *   `useData` フックにスキーマを渡し、データ取得時に `parse` する。
+
+---
+
+## 🧪 テスト実装ガイドライン (Testing Guidelines)
+
+### 1. 型安全性の維持と妥協点
+*   **原則:** テストコードにおいても `any` 型は極力排除し、`vi.Mock` や適切なインターフェースを使用して型安全性を保つ。これにより、リファクタリング時の影響範囲を正確に検知できるようにする。
+*   **例外的な `any` の許容:** 
+    *   SWR などの外部ライブラリの型定義が極めて複雑で、モックの型合わせに過大な工数を要する場合は、実務的な判断として `any` の使用を許容する。
+    *   その際は、ファイル全体の `eslint-disable` ではなく、該当箇所のみ `// eslint-disable-next-line @typescript-eslint/no-explicit-any` を使用して、意図的な使用であることを明示する。
+    *   **「型を完璧に合わせること」よりも「テストが網羅されていること」を優先する。**
+
+### 2. 実行戦略 (E2E)
+*   **フェーズ1:** `npx playwright test` による高速な並列実行。
+*   **フェーズ2:** 並列実行で失敗したテストのみ、`--workers=1` オプションを付けて個別に直列検証し、バグか競合（Flaky）かを切り分ける。

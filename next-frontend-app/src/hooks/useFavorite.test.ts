@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useFavorite } from "./useFavorite";
 import axios from "@/lib/axios";
 import { useSWRConfig } from "swr";
-import useSWRMutation from "swr/mutation";
+import useSWRMutation, { SWRMutationResponse } from "swr/mutation";
 
 vi.mock("@/lib/axios");
 vi.mock("swr");
@@ -15,25 +14,27 @@ describe("useFavorite", () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.mocked(useSWRConfig).mockReturnValue({ mutate: mockMutate } as any);
 
-        // useSWRMutation の戻り値を設定
+        // SWRConfigの型対応
+        vi.mocked(useSWRConfig).mockReturnValue({
+            mutate: mockMutate,
+        } as unknown as ReturnType<typeof useSWRConfig>);
 
+        // 【修正点】SWRの型定義が複雑なため、モック引数は any で許容する
         vi.mocked(useSWRMutation).mockImplementation(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (key: any, fetcher: any, options: any) => {
-                // fetcherの名前や中身で add か remove か判定しにくい場合もあるが、
-
-                // 渡された fetcher をそのまま実行することで、axiosの呼び出しを誘発する。
-
                 return {
-                    trigger: async () => {
-                        await fetcher(key); // axios.post または delete が呼ばれる
-
-                        if (options?.onSuccess) options.onSuccess(); // 成功時コールバック（mutate等）を実行
+                    trigger: async (arg: unknown) => {
+                        // fetcher呼び出しも柔軟に対応
+                        await fetcher(key, { arg });
+                        if (options?.onSuccess) options.onSuccess();
                     },
-
                     isMutating: false,
-                } as any;
+                    data: undefined,
+                    error: undefined,
+                    reset: vi.fn(),
+                } as unknown as SWRMutationResponse<unknown, unknown, string, unknown>;
             },
         );
     });
@@ -52,7 +53,9 @@ describe("useFavorite", () => {
         );
 
         // キャッシュ更新確認 (mutateの呼び出し)
-        expect(mockMutate).toHaveBeenCalledWith(`/api/shops/${shopId}`);
+        expect(mockMutate).toHaveBeenCalledWith(`/api/shops/${shopId}`); // useFavorite内でENDPOINTSを使うように修正されたが、値は同じ
+        // 注意: useFavorite.ts内の修正により、ここも ENDPOINTS.SHOPS.DETAIL(shopId) などを使っているはずだが
+        // 文字列としては等価なのでテストは通るはず。
         expect(mockMutate).toHaveBeenCalledWith("/api/favorites");
         // 店舗一覧の更新（マッチャー関数が渡されているか）
         expect(mockMutate).toHaveBeenCalledWith(

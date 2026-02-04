@@ -484,3 +484,11 @@
 *   **型定義の修正:**
     *   `src/types/index.ts` において、Zod スキーマおよび API の実態に合わせてリレーションプロパティ（`area`, `genre`, `shop`）を `Optional (?)` に修正。これにより、静的な型定義とランタイムバリデーションの整合性を確保。
 *   **検証:** E2Eテストを実行し、APIレスポンスが正常にバリデーションを通過することを確認。
+
+#### [Frontend] テストコードの any 型撲滅と Vitest 設定の修正 (Quality Assurance)
+*   **実装内容:**
+    *   `src/hooks/*.test.ts` から `as any` を排除し、`vi.Mock` や `SWRMutationResponse` などの適切な型定義を適用。
+    *   SWR の複雑な型制約（`Key` や `fetcher`）に対しては、`unknown` ではなく厳密な型（`string` 等）を使用するか、意図的な `any`（eslint-disable付き）で回避する方針を採用。
+*   **設定修正:**
+    *   `vitest.config.ts` において、`alias` 設定が `projects` 配下に継承されない問題を解決するため、`mergeConfig` を使用して共通設定を適用する形にリファクタリング。
+*   **検証:** `npm test` (Unit + Storybook) が全件パスすることを確認。

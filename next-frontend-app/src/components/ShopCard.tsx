@@ -5,8 +5,13 @@ import Link from "next/link";
 import { useFavorite } from "@/hooks/useFavorite";
 import { Shop } from "@/types";
 
+/**
+ * ShopCardコンポーネントが必要とする店舗データのサブセット
+ */
+type ShopCardData = Pick<Shop, "id" | "name" | "image_url" | "area" | "genre" | "favorites_exists">;
+
 interface ShopCardProps {
-    shop: Shop;
+    shop: ShopCardData;
     priority?: boolean;
     showConfirmDialog?: boolean; // 削除時に確認ダイアログを表示するかどうか
 }

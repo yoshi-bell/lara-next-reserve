@@ -3,8 +3,13 @@
 import { Reservation } from "@/types";
 import Link from "next/link";
 
+/**
+ * ReservationCardコンポーネントが必要とする予約データのサブセット
+ */
+type ReservationCardData = Pick<Reservation, "id" | "shop_id" | "start_at" | "number" | "shop">;
+
 interface ReservationCardProps {
-    reservation: Reservation;
+    reservation: ReservationCardData;
     index?: number;
     onCancel?: (id: number) => void;
     isHistory?: boolean;

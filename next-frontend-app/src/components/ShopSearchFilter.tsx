@@ -1,5 +1,4 @@
-import { Area } from "@/hooks/useAreas";
-import { Genre } from "@/hooks/useGenres";
+import { Area, Genre } from "@/types";
 
 interface ShopSearchFilterProps {
     selectedArea: string;

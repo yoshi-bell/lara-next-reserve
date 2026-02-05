@@ -19,8 +19,9 @@ test.describe("店舗検索機能", () => {
       const areaSelect = page.locator('select').filter({ hasText: 'All area' });
       
       // APIレスポンスを待機（SWRの更新完了を待つ）
+      // 修正: クエリパラメータを含むリクエストを待つことで、キャッシュ再検証(全件取得)を誤検知しないようにする
       const responsePromise = page.waitForResponse(resp => 
-        resp.url().includes('/api/shops') && resp.status() === 200
+        resp.url().includes('/api/shops') && resp.url().includes('area_id=') && resp.status() === 200
       );
       await areaSelect.selectOption({ label: targetArea.name });
       await responsePromise;
@@ -52,7 +53,7 @@ test.describe("店舗検索機能", () => {
       
       // APIレスポンスを待機
       const responsePromise = page.waitForResponse(resp => 
-        resp.url().includes('/api/shops') && resp.status() === 200
+        resp.url().includes('/api/shops') && resp.url().includes('genre_id=') && resp.status() === 200
       );
       await genreSelect.selectOption({ label: targetGenre.name });
       await responsePromise;
@@ -73,7 +74,7 @@ test.describe("店舗検索機能", () => {
     
     // APIレスポンスを待機
     const responsePromise = page.waitForResponse(resp => 
-      resp.url().includes('/api/shops') && resp.status() === 200
+      resp.url().includes('/api/shops') && resp.url().includes('name=') && resp.status() === 200
     );
     await searchInput.fill("仙人");
     await responsePromise;
@@ -92,7 +93,11 @@ test.describe("店舗検索機能", () => {
     await page.locator('select').filter({ hasText: 'All genre' }).selectOption({ label: "寿司" });
     
     const responsePromise = page.waitForResponse(resp => 
-      resp.url().includes('/api/shops') && resp.status() === 200
+      resp.url().includes('/api/shops') && 
+      resp.url().includes('area_id=') && 
+      resp.url().includes('genre_id=') && 
+      resp.url().includes('name=') && 
+      resp.status() === 200
     );
     await page.getByPlaceholder("Search ...").fill("仙");
     await responsePromise;

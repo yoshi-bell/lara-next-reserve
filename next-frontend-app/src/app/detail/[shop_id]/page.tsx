@@ -50,8 +50,8 @@ export default function ShopDetailPage() {
                     </div>
 
                     <div className="text-sm font-bold text-black mb-4">
-                        <span className="mr-2">#{shop.area.name}</span>
-                        <span>#{shop.genre.name}</span>
+                        {shop.area && <span className="mr-2">#{shop.area.name}</span>}
+                        {shop.genre && <span>#{shop.genre.name}</span>}
                     </div>
 
                     <p className="text-black leading-relaxed">

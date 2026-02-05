@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成済みの設定済みaxiosを使う
-import { isAxiosError } from "axios"; // 追加
+import { isApiError } from "@/lib/typeGuards"; // isApiErrorをインポート
 import Header from "@/components/Header"; // Headerをインポート
 import { useAuth } from "@/hooks/useAuth"; // useAuthをインポート
 import { ENDPOINTS } from "@/services/endpoints";
@@ -37,7 +37,7 @@ export default function LoginPage() {
 
         } catch (err) {
             // エラーハンドリング
-            if (isAxiosError(err) && err.response && err.response.data) {
+            if (isApiError(err) && err.response.data) {
                 setError(err.response.data.message || "ログインに失敗しました。");
             } else {
                 setError("予期せぬエラーが発生しました。");

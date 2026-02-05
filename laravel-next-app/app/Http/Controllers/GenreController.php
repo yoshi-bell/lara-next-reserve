@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 
+use App\Http\Resources\GenreResource;
+
 class GenreController extends Controller
 {
     /**
@@ -12,6 +14,6 @@ class GenreController extends Controller
      */
     public function index()
     {
-        return response()->json(Genre::all());
+        return GenreResource::collection(Genre::all());
     }
 }

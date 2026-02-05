@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/axios"; // 作成したaxiosをインポート
-import { isAxiosError } from "axios"; // isAxiosErrorをインポート
+import { isApiError } from "@/lib/typeGuards"; // isApiErrorをインポート
 import Header from "@/components/Header"; // 追加
 import { ENDPOINTS } from "@/services/endpoints";
 
@@ -41,7 +41,7 @@ export default function RegisterPage() {
             router.push("/thanks");
         } catch (err) {
             // エラーハンドリング
-            if (isAxiosError(err) && err.response && err.response.data) {
+            if (isApiError(err) && err.response.data) {
                 const errorData = err.response.data;
                 const errorMessage =
                     errorData.message ||

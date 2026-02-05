@@ -15,6 +15,12 @@ export const ENDPOINTS = {
     FAVORITES: {
         LIST: '/api/favorites', // お気に入り一覧取得用
     },
+    AREAS: {
+        LIST: '/api/areas',
+    },
+    GENRES: {
+        LIST: '/api/genres',
+    },
     AUTH: {
         LOGIN: '/api/login',
         LOGOUT: '/api/logout',

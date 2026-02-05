@@ -1,19 +1,12 @@
 // src/hooks/useGenres.ts
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-
-export interface Genre {
-    id: number;
-    name: string;
-}
-
-const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-};
+import { Genre } from '@/types';
+import { ENDPOINTS } from '@/services/endpoints';
+import { useData } from './useData';
+import { genreSchema } from '@/lib/schemas';
+import { z } from 'zod';
 
 export function useGenres() {
-    const { data, error, isLoading } = useSWR<Genre[]>('/api/genres', fetcher);
+    const { data, error, isLoading } = useData<Genre[]>(ENDPOINTS.GENRES.LIST, z.array(genreSchema));
 
     return {
         genres: data,

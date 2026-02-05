@@ -2,7 +2,7 @@
 import useSWR from 'swr';
 import axios from '@/lib/axios';
 import { useRouter } from 'next/navigation';
-import { isAxiosError } from 'axios'; // 追加
+import { isApiError } from '@/lib/typeGuards';
 import { ENDPOINTS } from '@/services/endpoints';
 
 interface User {
@@ -17,7 +17,7 @@ const fetcher = async (url: string) => {
         const res = await axios.get(url);
         return res.data;
     } catch (error) {
-        if (isAxiosError(error) && error.response && error.response.status === 401) {
+        if (isApiError(error) && error.response.status === 401) {
             // 401 Unauthorized の場合は null を返す（未ログイン）
             return null;
         }

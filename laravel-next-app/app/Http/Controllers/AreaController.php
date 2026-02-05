@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use Illuminate\Http\Request;
 
+use App\Http\Resources\AreaResource;
+
 class AreaController extends Controller
 {
     /**
@@ -12,6 +14,6 @@ class AreaController extends Controller
      */
     public function index()
     {
-        return response()->json(Area::all());
+        return AreaResource::collection(Area::all());
     }
 }

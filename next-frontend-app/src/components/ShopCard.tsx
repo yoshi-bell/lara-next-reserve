@@ -64,8 +64,8 @@ export default function ShopCard({ shop, priority = false, showConfirmDialog = f
             <div className="p-4 flex flex-col flex-grow">
                 <h2 className="text-lg font-bold mb-2 text-black">{shop.name}</h2>
                 <div className="text-[10px] text-black font-bold mb-4 flex">
-                    <span className="mr-1">#{shop.area.name}</span>
-                    <span>#{shop.genre.name}</span>
+                    {shop.area && <span className="mr-1">#{shop.area.name}</span>}
+                    {shop.genre && <span>#{shop.genre.name}</span>}
                 </div>
                 <div className="flex justify-between items-center mt-auto">
                     <Link href={`/detail/${shop.id}`} className="bg-blue-600 text-white text-xs px-4 py-2 rounded shadow hover:bg-blue-700 transition inline-block">

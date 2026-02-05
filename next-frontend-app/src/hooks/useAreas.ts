@@ -1,19 +1,12 @@
 // src/hooks/useAreas.ts
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-
-export interface Area {
-    id: number;
-    name: string;
-}
-
-const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-};
+import { Area } from '@/types';
+import { ENDPOINTS } from '@/services/endpoints';
+import { useData } from './useData';
+import { areaSchema } from '@/lib/schemas';
+import { z } from 'zod';
 
 export function useAreas() {
-    const { data, error, isLoading } = useSWR<Area[]>('/api/areas', fetcher);
+    const { data, error, isLoading } = useData<Area[]>(ENDPOINTS.AREAS.LIST, z.array(areaSchema));
 
     return {
         areas: data,

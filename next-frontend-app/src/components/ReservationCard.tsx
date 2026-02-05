@@ -44,7 +44,7 @@ export default function ReservationCard({ reservation, index = 0, onCancel, isHi
             <div className="space-y-4 text-sm flex-grow">
                 <div className="flex items-center">
                     <span className="w-20">Shop</span>
-                    <span>{reservation.shop.name}</span>
+                    <span>{reservation.shop?.name}</span>
                 </div>
                 <div className="flex items-center">
                     <span className="w-20">Date</span>

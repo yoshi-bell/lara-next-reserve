@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReservation } from "@/hooks/useReservation";
-import { isAxiosError } from "axios";
+import { isApiError } from "@/lib/typeGuards";
 
 type Props = {
     shopId: number;
@@ -47,7 +47,7 @@ export default function ReservationForm({ shopId, shopName }: Props) {
             router.push("/done");
         } catch (error) {
             console.error("Reservation failed:", error);
-            if (isAxiosError(error) && error.response && error.response.data && error.response.data.message) {
+            if (isApiError(error) && error.response.data) {
                 setReservationError(error.response.data.message);
             } else {
                 setReservationError("予約に失敗しました。ログイン状態や入力内容を確認してください。");

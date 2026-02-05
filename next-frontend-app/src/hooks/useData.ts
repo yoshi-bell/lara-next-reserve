@@ -30,33 +30,31 @@ export function useData<T>(url: string | null, schema?: ZodType<T>, options?: SW
     let state: AsyncState<T>;
 
     if (isLoading || (!rawResponse && !apiError)) {
+        // ロード中
         state = { status: 'loading', data: undefined, error: undefined, isLoading: true };
     } else if (apiError) {
-        // 通信エラー (AxiosError等)
+        // 通信エラー
         state = { status: 'error', data: undefined, error: apiError, isLoading: false };
-    } else {
-        // rawResponse.data が存在する場合
-        if (schema && rawResponse) {
+    } else if (rawResponse) {
+        // データ取得成功時
+        if (schema) {
             const result = schema.safeParse(rawResponse.data);
             if (result.success) {
-                // バリデーション成功: パース・変換済みデータ (result.data) を使用
-                // これにより Branded Type への変換も反映される
+                // バリデーション成功
                 state = { status: 'success', data: result.data, error: undefined, isLoading: false };
             } else {
-                // バリデーション失敗: 専用のエラー型を生成
+                // バリデーション失敗
                 const vError = new ValidationError(result.error, url || 'unknown');
                 console.error(`[useData] Validation Error at ${url}:`, result.error.format());
                 state = { status: 'error', data: undefined, error: vError, isLoading: false };
             }
         } else {
-            // スキーマ指定なし、またはデータ未取得
-            state = { 
-                status: rawResponse ? 'success' : 'loading', 
-                data: rawResponse?.data as T, 
-                error: undefined, 
-                isLoading: !rawResponse 
-            };
+            // スキーマ指定なし (生データを T として扱う)
+            state = { status: 'success', data: rawResponse.data as T, error: undefined, isLoading: false };
         }
+    } else {
+        // 万が一のフォールバック (基本はここには来ない)
+        state = { status: 'loading', data: undefined, error: undefined, isLoading: true };
     }
 
     return {

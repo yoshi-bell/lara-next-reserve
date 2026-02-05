@@ -6,14 +6,14 @@ import { shopSchema } from '@/lib/schemas';
 
 export function useShopDetail(id: string | number | undefined) {
     // SWRを使って /api/shops/{id} からデータをフェッチ
-    const { data, error, isLoading } = useData<Shop>(
+    const result = useData<Shop>(
         id ? ENDPOINTS.SHOPS.DETAIL(id) : null,
         shopSchema
     );
 
     return {
-        shop: data,
-        isLoading,
-        isError: error,
+        ...result,
+        shop: result.data,
+        isError: result.error,
     };
 }

@@ -16,14 +16,12 @@ export function useShops(params?: { areaId?: string; genreId?: string; name?: st
 
     // useDataを使ってデータをフェッチ (自動アンラップ + Zodバリデーション)
     // 第2引数にスキーマ、第3引数にオプションを渡す
-    const { data, error, isLoading, mutate } = useData<Shop[]>(url, z.array(shopSchema), {
+    const result = useData<Shop[]>(url, z.array(shopSchema), {
         keepPreviousData: true,
     });
 
     return {
-        shops: data,
-        isLoading,
-        isError: error,
-        mutate,
+        ...result,
+        shops: result.data, // 互換性のためのエイリアス
     };
 }

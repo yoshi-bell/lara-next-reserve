@@ -1,0 +1,20 @@
+
+## 2026-02-05: リファクタリング フェーズ 3.5（型安全性の深化）完了
+
+### 1. 完了したタスク
+
+#### [Frontend] 型システムを活用した高度なリファクタリング
+*   **カスタム型ガード導入:** `src/lib/typeGuards.ts` に `isApiError` を実装。`error is AxiosError & { response: ... }` と定義を強化することで、`try-catch` ブロック内でのプロパティアクセスから `any` やオプショナルチェーンを排除。
+*   **Utility Types の活用:** `ShopCard`, `ReservationCard` の Props 定義において `Pick` を使用。コンポーネントの依存範囲を最小化し、堅牢性を向上。
+*   **Discriminated Unions による状態管理:** 
+    *   `src/types/index.ts` に `AsyncState<T>` を導入。
+    *   `useData` フックの戻り値を `status` プロパティで型絞り込み可能な構造に刷新。
+    *   主要ページ（ShopsPage, ShopDetailPage, Mypage）の表示ロジックを `status` 判定に移行し、不可能な状態（ロード中かつデータあり等）を型レベルで防止。
+
+#### 不整合の解消とUI改善
+*   **Backend統一:** `AreaController`, `GenreController` を Resource 化し、API全体のレスポンス構造を `{"data": ...}` に統一。
+*   **UIガード:** データ欠損時にハッシュタグのみが表示される現象を防ぐため、条件付きレンダリングによるガードを追加。
+
+### 2. 総括
+TypeScript の高度な機能を駆使することで、コードの可読性だけでなく「論理的な正しさ」をコンパイラが保証できる領域を大幅に拡大した。
+また、API不整合の解消によりシステム全体の信頼性が向上。E2Eテストにより、これらの大規模な内部変更が正常に機能していることを実証済み。

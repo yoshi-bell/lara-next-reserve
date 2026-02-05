@@ -13,7 +13,7 @@ export default function ShopsPage() {
     const [selectedGenre, setSelectedGenre] = useState("");
     const [searchName, setSearchName] = useState("");
 
-    const { shops, isLoading, isError } = useShops({
+    const shopsState = useShops({
         areaId: selectedArea,
         genreId: selectedGenre,
         name: searchName,
@@ -22,8 +22,10 @@ export default function ShopsPage() {
     const { areas } = useAreas();
     const { genres } = useGenres();
 
-    if (isLoading && !shops) return <div className="text-center py-8">読み込み中...</div>;
-    if (isError) return <div className="text-center py-8 text-red-500">データの読み込みに失敗しました。</div>;
+    if (shopsState.status === "loading" && !shopsState.shops) return <div className="text-center py-8">読み込み中...</div>;
+    if (shopsState.status === "error") return <div className="text-center py-8 text-red-500">データの読み込みに失敗しました。</div>;
+
+    const shops = shopsState.shops;
 
     return (
         <div className="min-h-screen bg-gray-100">

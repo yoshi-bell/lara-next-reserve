@@ -6,11 +6,10 @@ import { genreSchema } from '@/lib/schemas';
 import { z } from 'zod';
 
 export function useGenres() {
-    const { data, error, isLoading } = useData<Genre[]>(ENDPOINTS.GENRES.LIST, z.array(genreSchema));
+    const result = useData<Genre[]>(ENDPOINTS.GENRES.LIST, z.array(genreSchema));
 
     return {
-        genres: data,
-        isLoading,
-        isError: error,
+        ...result,
+        genres: result.data,
     };
 }

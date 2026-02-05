@@ -11,12 +11,10 @@ export function useMyReservations(type: 'future' | 'history' = 'future') {
         type: type === 'history' ? 'history' : undefined,
     })}`;
 
-    const { data, error, isLoading, mutate } = useData<Reservation[]>(url, z.array(reservationSchema));
+    const result = useData<Reservation[]>(url, z.array(reservationSchema));
 
     return {
-        reservations: data,
-        isLoading,
-        isError: error,
-        mutate,
+        ...result,
+        reservations: result.data,
     };
 }

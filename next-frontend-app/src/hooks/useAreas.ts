@@ -6,11 +6,10 @@ import { areaSchema } from '@/lib/schemas';
 import { z } from 'zod';
 
 export function useAreas() {
-    const { data, error, isLoading } = useData<Area[]>(ENDPOINTS.AREAS.LIST, z.array(areaSchema));
+    const result = useData<Area[]>(ENDPOINTS.AREAS.LIST, z.array(areaSchema));
 
     return {
-        areas: data,
-        isLoading,
-        isError: error,
+        ...result,
+        areas: result.data,
     };
 }

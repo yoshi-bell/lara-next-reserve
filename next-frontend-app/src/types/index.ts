@@ -1,15 +1,23 @@
 // 共通型定義ファイル
 
-// API Response Wrapper (Laravel JsonResource default)
+// API Response Wrapper
 export interface ApiResponse<T> {
     data: T;
 }
 
-// Laravel Standard Error Response
+// API Error Response
 export interface ApiErrorResponse {
     message: string;
-    errors?: Record<string, string[]>; // バリデーションエラー用
+    errors?: Record<string, string[]>;
 }
+
+/**
+ * 非同期データの状態を表す Discriminated Union
+ */
+export type AsyncState<T> =
+    | { status: 'loading'; data: undefined; error: undefined; isLoading: true }
+    | { status: 'success'; data: T;         error: undefined; isLoading: false }
+    | { status: 'error';   data: undefined; error: Error;     isLoading: false };
 
 // Area
 export interface Area {
@@ -35,18 +43,13 @@ export interface Shop {
     genre_id: number;
     description: string;
     image_url: string;
-    start_time: string; // HH:mm:ss
-    end_time: string;   // HH:mm:ss
+    start_time: string;
+    end_time: string;
     default_capacity: number;
     default_stay_time: number;
-    
-    // Relations
     area?: Area;
     genre?: Genre;
-    
-    // User specific (appended via attribute or withCount/exists)
     favorites_exists?: boolean;
-    
     created_at?: string;
     updated_at?: string;
 }
@@ -56,19 +59,15 @@ export interface Reservation {
     id: number;
     user_id: number;
     shop_id: number;
-    start_at: string; // DateTime string
+    start_at: string;
     number: number;
     usage_time: number;
-    
-    // Relations
     shop?: Shop;
-    
     created_at?: string;
     updated_at?: string;
-    deleted_at?: string | null; // 論理削除対応（履歴表示用）
 }
 
-// User (Auth)
+// User
 export interface User {
     id: number;
     name: string;

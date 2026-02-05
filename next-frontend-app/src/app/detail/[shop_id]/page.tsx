@@ -10,11 +10,13 @@ import ReservationForm from "@/components/ReservationForm"; // コンポーネ�
 export default function ShopDetailPage() {
     const params = useParams();
     const shop_id = params.shop_id as string;
-    const { shop, isLoading, isError } = useShopDetail(shop_id);
+    const shopState = useShopDetail(shop_id);
 
-    if (isLoading) return <div className="text-center py-8">読み込み中...</div>;
-    if (isError) return <div className="text-center py-8 text-red-500">店舗情報の取得に失敗しました。</div>;
-    if (!shop) return <div className="text-center py-8">店舗が見つかりませんでした。</div>;
+    if (shopState.status === "loading") return <div className="text-center py-8">読み込み中...</div>;
+    if (shopState.status === "error") return <div className="text-center py-8 text-red-500">店舗情報の取得に失敗しました。</div>;
+    if (!shopState.shop) return <div className="text-center py-8">店舗が見つかりませんでした。</div>;
+
+    const shop = shopState.shop;
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">

@@ -29,6 +29,10 @@
 ### プロセス記録ルール (Mandatory)
 `git push` を実行する直前に、**必ず** 以下の手順をステップ・バイ・ステップで実行すること。
 
+#### ステップ 0: ワークフローの更新
+* **対象ファイル:** `docs-private/WORKFLOW.md`
+* **アクション:** 完了したタスクのチェックボックスをオンにし、「現在進行中のタスク」を更新する。
+
 #### ステップ 1: 開発ログの記録
 * **対象ファイル:** `docs-private/DEV_LOG.md`
 * **アクション:** 実装内容、技術的判断、エラーと解決策、実行コマンドを追記する。
@@ -58,8 +62,8 @@
 > AIエージェントは作業中、常にここを更新すること。
 
 **現在のフェーズ:** Phase 8: 戦略的リファクタリング (Phase 3.5: 型安全性の深化)
-**現在のアクティブタスク:** Utility Types の活用
-**ステータス:** カスタム型ガード導入完了。UI/UX修正完了。
+**現在のアクティブタスク:** Discriminated Unions による状態管理
+**ステータス:** Utility Types導入完了。システム整合性確認済み。
 
 ---
 
@@ -129,7 +133,7 @@ AIエージェントは、各Phaseの実装を開始する際、以下のチェ�
 
 #### フェーズ 3.5: 型安全性の深化 (Advanced TypeScript)
 - [x] **カスタム型ガード (User-Defined Type Guards) の導入:** `isApiError` 作成と適用。
-- [ ] **Utility Types (Pick, Omit, Partial) の積極利用:** コンポーネントProps定義の効率化。
+- [x] **Utility Types (Pick, Omit, Partial) の積極利用:** コンポーネントProps定義の効率化。
 - [ ] **Discriminated Unions による状態管理:** `useData` 戻り値の厳格化。
 
 #### フェーズ 4: 継続的改善 (Maintenance)

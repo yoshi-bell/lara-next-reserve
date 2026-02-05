@@ -452,15 +452,15 @@
 
 #### [Frontend] SWRデータフェッチ処理の汎用化と型定義の標準化 (Quick Win)
 *   **実装内容:**
-    *   `src/types/index.ts` に共通型 `ApiResponse<T>` を定義。
-    *   `src/hooks/useData.ts` を作成し、SWR呼び出しとレスポンスのアンラップ処理 (`data?.data`) を集約。
-*   **適用:** 全てのデータ取得Hooks (`useShops`, `useMyReservations` 等) をリファクタリングし、重複コードを削減。
-*   **検証:** 型チェック (`tsc`) とE2Eテスト（検索、お気に入り）がパスすることを確認。`reservation` テストの失敗は日付依存の可能性が高いため、別途対応とする。
+    *   **src/types/index.ts** に共通型 **ApiResponse<T>** を定義。
+    *   **src/hooks/useData.ts** を作成し、SWR呼び出しとレスポンスのアンラップ処理 (**data?.data**) を集約。
+*   **適用:** 全てのデータ取得Hooks (**useShops**, **useMyReservations** 等) をリファクタリングし、重複コードを削減。
+*   **検証:** 型チェック (**tsc**) とE2Eテスト（検索、お気に入り）がパスすることを確認。**reservation** テストの失敗は日付依存の可能性が高いため、別途対応とする。
 
 #### [Frontend] テストコードのタイムゾーン依存バグの修正
-*   **不具合:** `tests/reservation.spec.ts` において、`toISOString()` (UTC) を使用して日付を生成していたため、実行時間帯（JSTの朝など）によってDB内のデータと画面表示の日付が1日ずれる現象が発生していた。
-*   **対応:** `toISOString()` を廃止し、実行環境のローカル時間（`getFullYear`, `getMonth`, `getDate`）に基づいた日付生成ロジックに修正。
-*   **検証:** DBリセット後の `reservation.spec.ts` 単体実行にて、正常に予約作成・確認・キャンセルができることを確認。
+*   **不具合:** **tests/reservation.spec.ts** において、**toISOString()** (UTC) を使用して日付を生成していたため、実行時間帯（JSTの朝など）によってDB内のデータと画面表示の日付が1日ずれる現象が発生していた。
+*   **対応:** **toISOString()** を廃止し、実行環境のローカル時間（**getFullYear**, **getMonth**, **getDate**）に基づいた日付生成ロジックに修正。
+*   **検証:** DBリセット後の **reservation.spec.ts** 単体実行にて、正常に予約作成・確認・キャンセルができることを確認。
 
 ## 2026-02-04 (後半): リファクタリング フェーズ2（DX革新）
 
@@ -468,8 +468,8 @@
 
 #### [Fullstack] OpenAPIによる型定義の自動同期システム (Core Strategy)
 *   **実装内容:**
-    *   **Backend:** `knuckleswtf/scribe` を導入し、`openapi` モードを有効化。コードベースから `public/docs/openapi.yaml` を自動生成するフローを確立。
-    *   **Frontend:** `openapi-typescript` を導入し、`npm run codegen` コマンドを作成。バックエンドのYAMLから `src/types/schema.d.ts` を自動生成するパイプラインを構築。
+    *   **Backend:** **knuckleswtf/scribe** を導入し、**openapi** モードを有効化。コードベースから **public/docs/openapi.yaml** を自動生成するフローを確立。
+    *   **Frontend:** **openapi-typescript** を導入し、**npm run codegen** コマンドを作成。バックエンドのYAMLから **src/types/schema.d.ts** を自動生成するパイプラインを構築。
 *   **成果:** バックエンドの実装変更（Resource/Request）をフロントエンドの型定義にコマンド一つで同期可能となり、手動管理による型不整合リスクを排除。
 
 ### 2. 現在のステータス
@@ -478,20 +478,20 @@
 
 #### [Frontend] Zodによるバリデーションと型定義の強化 (Quality Assurance)
 *   **実装内容:**
-    *   `src/lib/schemas.ts` を作成し、`Shop`, `Reservation`, `User` などの Zod スキーマを定義。
-    *   Laravel の `whenLoaded` 仕様（キー自体が存在しない）に合わせ、リレーションフィールドを `.optional()` として定義。
-    *   `useData` フックを拡張し、第2引数に渡されたスキーマで `safeParse` を実行するランタイムバリデーションを導入。
+    *   **src/lib/schemas.ts** を作成し、**Shop**, **Reservation**, **User** などの Zod スキーマを定義。
+    *   Laravel の **whenLoaded** 仕様（キー自体が存在しない）に合わせ、リレーションフィールドを **.optional()** として定義。
+    *   **useData** フックを拡張し、第2引数に渡されたスキーマで **safeParse** を実行するランタイムバリデーションを導入。
 *   **型定義の修正:**
-    *   `src/types/index.ts` において、Zod スキーマおよび API の実態に合わせてリレーションプロパティ（`area`, `genre`, `shop`）を `Optional (?)` に修正。これにより、静的な型定義とランタイムバリデーションの整合性を確保。
+    *   **src/types/index.ts** において、Zod スキーマおよび API の実態に合わせてリレーションプロパティ（**area**, **genre**, **shop**）を **Optional (?)** に修正。これにより、静的な型定義とランタイムバリデーションの整合性を確保。
 *   **検証:** E2Eテストを実行し、APIレスポンスが正常にバリデーションを通過することを確認。
 
 #### [Frontend] テストコードの any 型撲滅と Vitest 設定の修正 (Quality Assurance)
 *   **実装内容:**
-    *   `src/hooks/*.test.ts` から `as any` を排除し、`vi.Mock` や `SWRMutationResponse` などの適切な型定義を適用。
-    *   SWR の複雑な型制約（`Key` や `fetcher`）に対しては、`unknown` ではなく厳密な型（`string` 等）を使用するか、意図的な `any`（eslint-disable付き）で回避する方針を採用。
+    *   **src/hooks/*.test.ts** から **as any** を排除し、**vi.Mock** や **SWRMutationResponse** などの適切な型定義を適用。
+    *   SWR の複雑な型制約（**Key** や **fetcher**）に対しては、**unknown** ではなく厳密な型（**string** 等）を使用するか、意図的な **any**（eslint-disable付き）で回避する方針を採用。
 *   **設定修正:**
-    *   `vitest.config.ts` において、`alias` 設定が `projects` 配下に継承されない問題を解決するため、`mergeConfig` を使用して共通設定を適用する形にリファクタリング。
-*   **検証:** `npm test` (Unit + Storybook) が全件パスすることを確認。
+    *   **vitest.config.ts** において、**alias** 設定が **projects** 配下に継承されない問題を解決するため、**mergeConfig** を使用して共通設定を適用する形にリファクタリング。
+*   **検証:** **npm test** (Unit + Storybook) が全件パスすることを確認。
 
 ## 2026-02-04 (最終): 設計知見のドキュメント化
 
@@ -501,7 +501,7 @@
 *   **RULES_AND_ARCHITECTURE.md:** アーキテクチャに「型同期パイプライン」を、バリデーションに「スキーマ検証によるAPI型安全性」を追加。プロジェクトの不変方針として定義。
 *   **CODING_GUIDELINES.md:** 
     *   「標準アーキテクチャ・パターン」を新設。Scribe, openapi-typescript, useData, Zod を組み合わせた本プロジェクトの成功パターンを記録。
-    *   「テスト実装ガイドライン」を新設。テストにおける `any` 型の使用基準（原則排除・実務的妥協）を明文化。
+    *   「テスト実装ガイドライン」を新設。テストにおける **any** 型の使用基準（原則排除・実務的妥協）を明文化。
 
 ### 2. 総括
 本日のリファクタリングセッションを通じて、単にコードを綺麗にするだけでなく、その背後にある「設計の意図」や「将来のプロジェクトでも活かせる型安全な開発手法」を体系化し、ドキュメントとして資産化することに成功した。
@@ -511,7 +511,7 @@
 ### 1. 完了したタスク
 
 #### 開発プロセスの体系化
-*   **ドキュメント作成:** `docs-private/PORTFOLIO_DRAFT.md` を作成。
+*   **ドキュメント作成:** **docs-private/PORTFOLIO_DRAFT.md** を作成。
 *   **内容:** 本プロジェクトで実践した「AI協働型・ドキュメント駆動開発 (AC-DDD)」を体系化。憲法と法律の分離、手動リカバリー、マルチAI協働体制などの独自メソッドを明文化。
 *   **実績の記録:** 未経験から半年（約1000時間）で Findy スキル偏差値 PHP 67 / TypeScript 44 を達成した実績を、手法の有効性の証拠として統合。
 
@@ -531,5 +531,43 @@
 *   **次回のタスク:** フェーズ3.5「カスタム型ガードの導入」および「Utility Typesの活用」。
 
 #### [Frontend] UI/UX改善と最終確認
-*   **UI修正:** データ欠損時（`undefined`）に `#` だけが表示される不格好な状態を防ぐため、`?.` (Optional Chaining) だけでなく `&&` (Short-circuit evaluation) を用いた条件付きレンダリングに修正。
+*   **UI修正:** データ欠損時 (**undefined**) に **#** だけが表示される不格好な状態を防ぐため、**?.** (Optional Chaining) だけでなく **&&** (Short-circuit evaluation) を用いた条件付きレンダリングに修正。
 *   **全件テスト:** フロントエンドの全E2Eテストを実行し、リファクタリングによるデグレードがないことを最終確認（全件パス）。
+
+---
+
+## 2026-02-05: 型安全性の深化 (Step 3.5) および高度なTypeScript (Step 4)
+
+### 1. 完了したタスク
+
+#### カスタム型ガード (User-Defined Type Guards) の導入
+*   **実装:** **src/lib/typeGuards.ts** に **isApiError** を作成。Axios のエラーオブジェクトを型安全に判別可能にした。
+*   **適用:** ログイン、登録、予約フォームのエラーハンドリングにおいて、**any** 型や **as** キャストを排除し、型ガードを使用するようにリファクタリング。
+
+#### Utility Types の活用と Props の最適化
+*   **実装:** **ShopCard** や **ReservationCard** の Props 定義において、**Pick<Shop, ...>** 等を使用し、OpenAPI で生成された型定義と連動する形に修正。
+*   **効果:** プロパティの追加・変更があった場合でも、型定義の重複メンテナンスが不要になった。
+
+#### Discriminated Unions (判別可能な共用体) による状態管理
+*   **実装:** **src/types/index.ts** に **AsyncState<T>** を定義。
+*   **適用:** **useData** フックの戻り値を、**loading** | **error** | **success** の状態ごとに厳密に型分けされたオブジェクトに変更。
+*   **効果:** 「ローディング中なのにデータを参照する」といった論理的矛盾をコンパイルエラーとして検知可能になった。
+
+#### Branded Types (Nominal Typing) の導入
+*   **実装:** **src/types/index.ts** に **Brand<K, T>** ユーティリティを追加し、**UserId**, **ShopId** 等の専用型を定義。
+*   **適用:** Zod スキーマ (**src/lib/schemas.ts**) において **.transform()** を使用し、数値 ID を自動的に Branded Type へ変換するロジックを実装。これにより、異なる種類の ID 同士の誤代入を防止。
+
+#### Single Source of Truth (Zod Schema Inference) の確立
+*   **構造改革:** 循環参照を回避するため、**src/types/brands.ts** (ID定義), **src/lib/schemas.ts** (スキーマと型推論), **src/types/index.ts** (統合再エクスポート) の3層構造を導入。
+*   **型定義の自動化:** 手動の **interface** 定義を廃止し、**z.infer<typeof schema>** による自動生成型へ完全移行。
+*   **品質強化:** **useData** フックにおいてバリデーションを厳格化。パース・変換済みデータを返すように修正し、型不整合時は **ValidationError** を投げる仕組みを構築。
+*   **バックエンド整合性:** **UserController** および **UserResource** を修正し、認証ユーザー情報のレスポンス構造を **{"data": ...}** に統一。フロントエンドの期待値との不整合を解消。
+
+### 2. 学習・技術的判断
+*   **循環参照の回避:** 型の依存関係を整理し、Layer 1 (Brands) を最下層に置くことで、大規模開発でも破綻しないアーキテクチャを実現。
+*   **型安全性のランタイム保証:** 静的な型定義だけでなく、Zod による境界チェックを徹底することで、API仕様変更時の検知能力を最大化。
+*   **テスト駆動の有用性:** データの残存によるテスト失敗を、公式ドキュメントに記載した「2段階実行戦略」に基づいて切り分け・解決。環境に左右されない品質保証プロセスを実践。
+
+### 3. 現在のステータス
+*   **フェーズ:** Phase 8: 戦略的リファクタリング (Step 4: Expert TypeScript 完了)
+*   **次回のタスク:** Step 5: 継続的改善 (React Hook Form への移行検討)。

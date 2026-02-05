@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import ShopCard from "./ShopCard";
+import { ShopId, AreaId, GenreId } from '@/types';
 
 const meta: Meta<typeof ShopCard> = {
     title: "Components/ShopCard",
@@ -11,18 +12,18 @@ export default meta;
 type Story = StoryObj<typeof ShopCard>;
 
 const mockShop = {
-    id: 1,
+    id: 1 as ShopId,
     name: "仙人",
-    area_id: 1, // Added
-    genre_id: 1, // Added
-    description: "テスト店舗です。", // Added
+    area_id: 1 as AreaId,
+    genre_id: 1 as GenreId,
+    description: "テスト店舗です。", 
     image_url: "/images/shops/sushi.jpg",
-    start_time: "17:00:00", // Added
-    end_time: "23:00:00", // Added
-    default_capacity: 10, // Added
-    default_stay_time: 120, // Added
-    area: { id: 1, name: "東京都" }, // id added
-    genre: { id: 1, name: "寿司" }, // id added
+    start_time: "17:00:00", 
+    end_time: "23:00:00", 
+    default_capacity: 10, 
+    default_stay_time: 120, 
+    area: { id: 1 as AreaId, name: "東京都" },
+    genre: { id: 1 as GenreId, name: "寿司" },
     favorites_exists: false,
 };
 

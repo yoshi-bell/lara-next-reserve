@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { AreaId, GenreId, ShopId, ReservationId, UserId } from '@/types/brands';
 
 // 基本的なモデルのスキーマ定義
 
 // Area
 export const areaSchema = z.object({
-    id: z.number(),
+    id: z.number().transform(v => v as AreaId),
     name: z.string(),
     created_at: z.string().optional(),
     updated_at: z.string().optional(),
@@ -12,7 +13,7 @@ export const areaSchema = z.object({
 
 // Genre
 export const genreSchema = z.object({
-    id: z.number(),
+    id: z.number().transform(v => v as GenreId),
     name: z.string(),
     created_at: z.string().optional(),
     updated_at: z.string().optional(),
@@ -20,10 +21,10 @@ export const genreSchema = z.object({
 
 // Shop
 export const shopSchema = z.object({
-    id: z.number(),
+    id: z.number().transform(v => v as ShopId),
     name: z.string(),
-    area_id: z.number(),
-    genre_id: z.number(),
+    area_id: z.number().transform(v => v as AreaId),
+    genre_id: z.number().transform(v => v as GenreId),
     description: z.string(),
     image_url: z.string(),
     start_time: z.string(),
@@ -44,9 +45,9 @@ export const shopSchema = z.object({
 
 // Reservation
 export const reservationSchema = z.object({
-    id: z.number(),
-    user_id: z.number(),
-    shop_id: z.number(),
+    id: z.number().transform(v => v as ReservationId),
+    user_id: z.number().transform(v => v as UserId),
+    shop_id: z.number().transform(v => v as ShopId),
     start_at: z.string(), // DateTime string
     number: z.number(),
     usage_time: z.number(),
@@ -60,13 +61,20 @@ export const reservationSchema = z.object({
 
 // User (Auth)
 export const userSchema = z.object({
-    id: z.number(),
+    id: z.number().transform(v => v as UserId),
     name: z.string(),
     email: z.string().email(),
     email_verified_at: z.string().nullable().optional(),
     created_at: z.string().optional(),
     updated_at: z.string().optional(),
 });
+
+// 推論された型のExport (Single Source of Truth)
+export type Area = z.infer<typeof areaSchema>;
+export type Genre = z.infer<typeof genreSchema>;
+export type Shop = z.infer<typeof shopSchema>;
+export type Reservation = z.infer<typeof reservationSchema>;
+export type User = z.infer<typeof userSchema>;
 
 // Search Params (URL Query)
 export const searchParamsSchema = z.object({
@@ -75,3 +83,5 @@ export const searchParamsSchema = z.object({
     genre_id: z.string().regex(/^\d+$/).optional(),
     name: z.string().optional(),
 });
+
+export type SearchParams = z.infer<typeof searchParamsSchema>;

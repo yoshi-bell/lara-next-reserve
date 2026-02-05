@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
     /**
      * ログイン中のユーザー情報を取得
      */
-    public function show(Request $request): JsonResponse
+    public function show(Request $request): UserResource
     {
-        return response()->json($request->user());
+        return new UserResource($request->user());
     }
 }

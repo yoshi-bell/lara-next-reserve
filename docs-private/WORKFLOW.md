@@ -29,19 +29,19 @@
 ### プロセス記録ルール (Mandatory)
 `git push` を実行する直前に、**必ず** 以下の手順をステップ・バイ・ステップで実行すること。
 
-#### ステップ 0: ワークフローの更新
-* **対象ファイル:** `docs-private/WORKFLOW.md`
-* **アクション:** 完了したタスクのチェックボックスをオンにし、「現在進行中のタスク」を更新する。
-
 #### ステップ 1: 開発ログの記録
 * **対象ファイル:** `docs-private/DEV_LOG.md`
 * **アクション:** 実装内容、技術的判断、エラーと解決策、実行コマンドを追記する。
 
 #### ステップ 2: 復旧マニュアルの整合性確認
-* **対象ファイル:** `AGENT_RECOVERY_MANUAL.md`
+* **対象ファイル:** `docs-private/AGENT_RECOVERY_MANUAL.md`
 * **アクション:** `DEV_LOG.md` の更新内容に基づき、マニュアルを最新化する。
 
-#### ステップ 3: Gitコミット
+#### ステップ 3: ワークフローの更新
+* **対象ファイル:** `docs-private/WORKFLOW.md`
+* **アクション:** 完了したタスクのチェックボックスをオンにし、「現在進行中のタスク」を更新する。
+
+#### ステップ 4: Gitコミット
 * **言語:** 日本語で記述すること。
 * **フォーマット:** `プレフィックス: 内容` の形式とする。
 * **使用可能なプレフィックス:**
@@ -53,7 +53,7 @@
     * `test`: テストの追加・修正
     * `chore`: ビルドプロセス、ツール、ワークフローの変更
 
-#### ステップ 4: リモート反映
+#### ステップ 5: リモート反映
 * **アクション:** `git push origin <branch_name>` を実行し、変更をリモートリポジトリに確実に反映させる。
 
 ---
@@ -61,9 +61,9 @@
 ## 【現在進行中のタスク】 (Active Context)
 > AIエージェントは作業中、常にここを更新すること。
 
-**現在のフェーズ:** Phase 8: 戦略的リファクタリング (Phase 3.5: 型安全性の深化)
-**現在のアクティブタスク:** Discriminated Unions による状態管理
-**ステータス:** Utility Types導入完了。システム整合性確認済み。
+**現在のフェーズ:** Phase 8: 戦略的リファクタリング (Phase 4: Expert TypeScript)
+**現在のアクティブタスク:** Polymorphic Components の実装検討
+**ステータス:** Single Source of Truth 導入完了。3層構造による循環参照回避とZod型推論を確立。
 
 ---
 
@@ -98,7 +98,7 @@ Playwrightテストの「高速化」と「安定性」を両立するため、�
 1.  **フェーズ1: 高速並列実行**
     *   コマンド: `npx playwright test`
     *   目的: 全体の健全性を素早く確認する。
-    *   期待値: ほとんどのテストがパスする。データ競合で一部失敗する可能性がある。
+    *   期待値: ほとんどのテストがパスする。データ競動で一部失敗する可能性がある。
 2.  **フェーズ2: 失敗テストの直列検証**
     *   コマンド: `npx playwright test <failed_file_path> --workers=1`
     *   目的: フェーズ1で失敗したテストが「バグ」なのか「競合」なのかを切り分ける。
@@ -116,26 +116,31 @@ AIエージェントは、各Phaseの実装を開始する際、以下のチェ�
 ### Phase 8: 戦略的リファクタリング (Current)
 `docs-private/REFACTORING_PROPOSAL.md` に基づく品質強化フェーズ。
 
-#### フェーズ 1: 基盤整理 (Quick Win)
+#### Step 1: 基盤整理 (Quick Win)
 - [x] **URLクエリパラメータ構築の共通化:** `buildQueryParams` 作成とHooksへの適用。
 - [x] **SWRデータフェッチ処理の汎用化:** `useData<T>` フック作成と `ApiResponse<T>` 定義。
 
-#### フェーズ 2: 開発者体験 (DX) の革新
+#### Step 2: 開発者体験 (DX) の革新
 - [x] **OpenAPIによる型定義の自動同期システム:**
     - [x] Backend: Scribe導入と `openapi.yaml` 自動生成。
     - [x] Frontend: openapi-typescript導入と型生成スクリプト作成。
 
-#### フェーズ 3: 品質強化 (Quality Assurance)
+#### Step 3: 品質強化 (Quality Assurance)
 - [x] **Zodによるバリデーションと型定義の強化:**
     - [x] `src/lib/schemas.ts` 作成（リレーションのOptional化含む）。
     - [x] Hooksへのランタイムバリデーション適用。
 - [x] **テストコードの any 型撲滅:** モック定義の厳格化と `vitest` 設定修正。
 
-#### フェーズ 3.5: 型安全性の深化 (Advanced TypeScript)
+#### Step 3.5: 型安全性の深化 (Advanced TypeScript)
 - [x] **カスタム型ガード (User-Defined Type Guards) の導入:** `isApiError` 作成と適用。
 - [x] **Utility Types (Pick, Omit, Partial) の積極利用:** コンポーネントProps定義の効率化。
-- [ ] **Discriminated Unions による状態管理:** `useData` 戻り値の厳格化。
+- [x] **Discriminated Unions による状態管理:** `useData` 戻り値の厳格化。
 
-#### フェーズ 4: 継続的改善 (Maintenance)
+#### Step 4: さらなる高みへ (Expert TypeScript)
+- [x] **Branded Types (Nominal Typing) の導入:** `UserId`, `ShopId` 等の定義と適用。
+- [x] **Single Source of Truth (Zod Schema Inference):** `z.infer` による型定義の自動生成と手動定義의 廃止。
+- [ ] **Polymorphic Components (as props pattern):** 汎用コンポーネントの実装（必要に応じて）。
+
+#### Step 5: 継続的改善 (Maintenance)
 - [ ] **フォーム実装の刷新 (React Hook Form):** `useState` からの移行。
 - [ ] **TypeScript設定のさらなる厳格化:** `noUnusedLocals` 等の有効化。

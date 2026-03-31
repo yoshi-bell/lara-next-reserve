@@ -1,15 +1,16 @@
 # TypeScript Refactoring Candidates
 
-- [ ] Investigate Error Handling
-    - [ ] Check if `unknown` is used in catch blocks instead of `any`.
-    - [ ] Propose `isApiError` type guard.
-- [ ] Investigate Component Props
-    - [ ] Check if `ComponentProps` or `Pick/Omit` are used.
-    - [ ] Propose stricter component interfaces.
-- [ ] Investigate State Management
-    - [ ] Check usage of Discriminated Unions for loading/error states.
-- [ ] Prepare Proposal
-    - [ ] Summarize findings and impact on skill score.
+- [x] Investigate Error Handling
+    - [x] Check if `unknown` is used in catch blocks instead of `any`.
+    - [x] Propose `isApiError` type guard.
+- [x] Investigate Component Props
+    - [x] Check if `ComponentProps` or `Pick/Omit` are used.
+    - [x] Propose stricter component interfaces.
+- [x] Investigate State Management
+    - [x] Check usage of Discriminated Unions for loading/error states.
+- [x] Prepare Proposal
+    - [x] Summarize findings and impact on skill score.
+    - [ ] **Review Improvement Proposal** (`docs-private/SKILL_IMPROVEMENT_PROPOSAL.md`)
 - [ ] Phase 4: Expert TypeScript (Skill Boost)
     - [ ] [Branded Types] Define `Brand<K, T>` utility.
     - [ ] [Branded Types] Convert ID types (UserId, ShopId) to Branded Types.

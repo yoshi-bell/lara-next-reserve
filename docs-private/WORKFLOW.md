@@ -138,7 +138,7 @@ AIエージェントは、各Phaseの実装を開始する際、以下のチェ�
 
 #### Step 4: さらなる高みへ (Expert TypeScript)
 - [x] **Branded Types (Nominal Typing) の導入:** `UserId`, `ShopId` 等の定義と適用。
-- [x] **Single Source of Truth (Zod Schema Inference):** `z.infer` による型定義の自動生成と手動定義의 廃止。
+- [x] **Single Source of Truth (Zod Schema Inference):** `z.infer` による型定義の自動生成と手動定義の廃止。
 - [ ] **Polymorphic Components (as props pattern):** 汎用コンポーネントの実装（必要に応じて）。
 
 #### Step 5: 継続的改善 (Maintenance)

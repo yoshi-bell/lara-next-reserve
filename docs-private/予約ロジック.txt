@@ -1,0 +1,200 @@
+Rese 予約システム決定版ロジック
+1. 核心となる戦略
+方式: 在庫管理（枠管理）パターン
+
+30分ごとの「予約枠（Slot）」を物理テーブルとして持ち、残席数を管理する。
+
+時間管理: コース紐づけ方式
+
+reservations テーブルに終了時間 (end_at) は持たない。
+
+滞在時間は「選択されたコース（または店舗デフォルト）」から動的に計算する。
+
+2. データベース構造（ER図・要点）
+コード スニペット
+
+erDiagram
+    courses ||--o{ reservations : "コースが滞在時間を規定"
+    shops ||--o{ reservation_slots : "30分ごとの在庫"
+    shops ||--o{ reservations : "予約"
+
+    shops {
+        bigint id PK
+        int default_capacity "基本定員"
+    }
+
+    courses {
+        bigint id PK
+        string name
+        int stay_minutes "滞在時間 (例:120)"
+    }
+
+    reservation_slots {
+        bigint id PK
+        bigint shop_id FK
+        datetime slot_datetime "30分刻み (18:00, 18:30...)"
+        int max_capacity "最大席数"
+        int current_reserved "現在埋まっている数"
+    }
+
+    reservations {
+        bigint id PK
+        datetime start_at "開始時間"
+        bigint course_id FK "終了時間はここから計算"
+        int number "予約人数"
+    }
+3. 予約実行ロジック（アルゴリズム）
+ユーザーが 「18:00開始、4名、ディナーコース（120分）」 を予約する場合の処理フローです。
+
+Step 1: 必要な枠の算出
+プログラム（Laravel）側で、確保すべきスロットの範囲を計算します。
+
+開始：18:00
+
+終了：18:00 + 120分 = 20:00
+
+対象スロット: 18:00, 18:30, 19:00, 19:30 （計4枠）
+
+※20:00のスロットは含めません（退店時間のため）。
+
+Step 2: トランザクションと排他制御（最重要）
+ここからは一瞬の隙も与えずに処理します。
+
+DBトランザクション開始
+
+在庫のロック (lockForUpdate)
+
+対象の4つのスロット行を検索し、書き込みロックをかけます。他の人はこの処理が終わるまでこの日時の予約ができません。
+
+空き容量チェック
+
+取得した4枠すべてにおいて (max_capacity - current_reserved) >= 4 であるか確認。
+
+1つでも満席なら例外（エラー）を投げてロールバック。
+
+在庫の更新
+
+4枠すべての current_reserved に +4 する。
+
+予約データの作成
+
+reservations テーブルに保存（end_atなし、course_idあり）。
+
+コミット
+
+4. Laravelでの実装イメージ
+ReservationController (またはServiceクラス) の擬似コードです。
+
+PHP
+
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+public function store(Request $request)
+{
+    // 1. データ準備
+    $startAt = Carbon::parse($request->start_at);
+    $people = $request->number;
+    $course = Course::findOrFail($request->course_id);
+    
+    // 終了時間を計算 (18:00 + 120min = 20:00)
+    $endAt = $startAt->copy()->addMinutes($course->stay_minutes);
+
+    return DB::transaction(function () use ($request, $startAt, $endAt, $people, $course) {
+        // 2. 対象スロットをロックして取得
+        // shop_id が一致し、かつ時間が startAt以上 endAt未満 の枠
+        $slots = ReservationSlot::where('shop_id', $request->shop_id)
+            ->where('slot_datetime', '>=', $startAt)
+            ->where('slot_datetime', '<', $endAt)
+            ->lockForUpdate() // ★ 他のアクセスを待機させる
+            ->get();
+
+        // 3. 整合性チェック
+        // コース時間分のスロット(例:4つ)がちゃんと存在するか？
+        // (店舗の休日設定などで枠自体がない場合のエラーハンドリング)
+        $requiredSlotsCount = $course->stay_minutes / 30; 
+        if ($slots->count() < $requiredSlotsCount) {
+             abort(400, '予約できない時間帯が含まれています。');
+        }
+
+        // 4. 空きチェック & 在庫更新
+        foreach ($slots as $slot) {
+            if (($slot->max_capacity - $slot->current_reserved) < $people) {
+                abort(400, '満席の時間帯があります。');
+            }
+            $slot->current_reserved += $people;
+            $slot->save();
+        }
+
+        // 5. 予約確定
+        Reservation::create([
+            'user_id' => $request->user()->id,
+            'shop_id' => $request->shop_id,
+            'course_id' => $course->id,
+            'start_at' => $startAt,
+            'number' => $people,
+        ]);
+        
+        return response()->json(['message' => '予約完了']);
+    });
+}
+5. この設計のメリット（再確認）
+検索が爆速: 「18:00の空き」を知りたければ、reservation_slots の1行を見るだけで済みます。過去の予約履歴をすべて計算する必要がありません。
+
+柔軟性: 「クリスマスだけ席数を減らす」などの調整が、reservation_slots の max_capacity を変えるだけで対応可能です。
+
+データ整合性: lockForUpdate とトランザクションにより、ダブルブッキングを物理的に防ぎます。
+
+
+
+
+
+
+ｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰｰ
+
+
+
+ただし、「将来、店舗の設定（滞在時間）を変更した場合」に、過去の履歴データと表示上の不整合が発生するリスクが1点だけあります。
+
+ここさえ許容できれば（あるいは運用でカバーできれば）、この設計で進めて問題ありません。
+
+🔍 設計の評価ポイント
+1. 整合性・制約 (Good)
+予約枠の管理: reservation_slots が独立しており、UK(shop_id, slot_datetime) があるため、物理的に「枠の重複」や「過剰な在庫生成」を防げます。
+
+二重予約防止: reservations の UK(user_id, start_at) により、ユーザーが同日同時刻に複数の店を予約してしまうミスを防げます。
+
+2. ロジックの成立 (Good)
+「店舗デフォルト時間」を使うため、予約時に course_id などの選択が必須ではなくなり、UIがシンプルになります。
+
+在庫を減らすロジックも、shops.default_stay_time を参照すれば計算可能です。
+
+⚠️ 唯一のリスク：設定変更時の「過去改変」問題
+この設計（reservations テーブルに時間の情報を持たず、常に shops を参照する設計）には、**「タイムトラベル問題」**があります。
+
+シナリオ
+1月1日: A店（滞在時間 120分 設定）に、ユーザーが「18:00」に予約を入れる。
+
+システムは 18:00〜20:00 分の在庫を減らします（正常）。
+
+2月1日: A店が回転率を上げるため、滞在時間を 90分 に変更する。
+
+その後: ユーザーが1月1日の履歴（マイページ）を見る。
+
+システム計算：開始 18:00 + 現在の設定 90分 = 終了 19:30
+
+結果: 実際は2時間利用したはずなのに、表示上は「1時間半」の利用だったことになります。
+
+対策案（今の設計を維持しつつ解決する方法）
+もしこの「過去の表示ズレ」を防ぎたい場合は、reservations テーブルに usage_time (INT型: 利用時間分) というカラムを1つだけ追加することをお勧めします。
+
+end_at (終了時刻) は持たなくてOKです（ユーザーの希望通り）。
+
+usage_time に、予約した瞬間の「店舗のデフォルト時間」をコピーして保存（スナップショット）しておきます。
+
+これなら、後で店舗設定が変わっても「その予約は120分枠だった」という事実が残り、不整合が起きません。
+
+結論：どう進めるべきか
+今回のプロジェクトは「学習用」であり、「フロントエンドとバックエンドの分離」が主目的ですので、今のER図のままで進めてOK です。
+
+「店舗の滞在時間設定は、頻繁に変えるものではない（変えるときはシステムメンテナンスとして扱う）」という前提を置けば、この不整合は運用で回避できるからです。
